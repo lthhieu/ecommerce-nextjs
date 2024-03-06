@@ -13,9 +13,10 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import Link from 'next/link'
 
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const pages = ['products', 'introduction', 'blog'];
+const settings = ['profile', 'account', 'dashboard', 'logout'];
 
 function Header() {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -90,7 +91,9 @@ function Header() {
                         >
                             {pages.map((page) => (
                                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center">{page}</Typography>
+                                    <Typography textAlign="center" sx={{ ">a": { color: 'unset', textDecoration: 'unset' } }}>
+                                        <Link href={`/${page}`}>{page}</Link>
+                                    </Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
@@ -119,9 +122,9 @@ function Header() {
                             <Button
                                 key={page}
                                 onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
+                                sx={{ my: 2, color: 'white', display: 'block', ">a": { color: 'unset', textDecoration: 'unset' } }}
                             >
-                                {page}
+                                <Link href={`/${page}`}>{page}</Link>
                             </Button>
                         ))}
                     </Box>
