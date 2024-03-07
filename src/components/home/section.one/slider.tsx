@@ -2,8 +2,8 @@
 import * as React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import CustomSlider from './custom.slider';
 interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
@@ -21,8 +21,8 @@ function CustomTabPanel(props: TabPanelProps) {
             {...other}
         >
             {value === index && (
-                <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
+                <Box sx={{ py: 2, px: 1 }}>
+                    {children}
                 </Box>
             )}
         </div>
@@ -49,7 +49,7 @@ const Slider = () => {
                 </Tabs>
             </Box>
             <CustomTabPanel value={value} index={0}>
-                Item One
+                <CustomSlider />
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
                 Item Two
