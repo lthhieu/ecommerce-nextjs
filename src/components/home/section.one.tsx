@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
+import Slider from "./section.one/slider";
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
@@ -21,7 +22,9 @@ const SectionOne = () => {
                         <Item>all collections</Item>
                     </Grid>
                     <Grid xs={12} md={8}>
-                        <Item>slider</Item>
+                        <Item>
+                            <Slider />
+                        </Item>
                     </Grid>
                 </Grid>
             </Box>
