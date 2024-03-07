@@ -19,7 +19,7 @@ const SectionOne = () => {
             <Box sx={{ flexGrow: 1 }}>
                 <Grid container spacing={2}>
                     <Grid sx={{ display: { xs: 'none', md: 'block' } }} md={4}>
-                        <Item>all collections</Item>
+                        <Item sx={{ height: '100%' }}>all collections</Item>
                     </Grid>
                     <Grid xs={12} md={8}>
                         <Item>
