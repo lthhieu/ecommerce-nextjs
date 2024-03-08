@@ -13,7 +13,13 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary
 }));
 
-const SectionOne = () => {
+interface IProps {
+    categories: ICategories[]
+}
+
+const SectionOne = (props: IProps) => {
+    const { categories } = props;
+    console.log(categories)
     return (
         <Container sx={{ mt: 2 }}>
             <Box sx={{ flexGrow: 1 }}>
