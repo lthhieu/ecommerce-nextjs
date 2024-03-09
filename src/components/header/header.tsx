@@ -106,7 +106,7 @@ function Header() {
     );
 
     return (
-        <AppBar position="static" sx={{ backgroundColor: '#4c5c6c' }}>
+        <AppBar position="static" sx={{ backgroundColor: '#7F00FF' }}>
             <Container>
                 <Toolbar disableGutters>
                     <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />

@@ -5,7 +5,7 @@ export default async function Home() {
   const response = await api.get('categories').json<IBackendResponse<ICategories[]>>();
   return (
     <>
-      <SectionOne categories={response?.data ?? []} />
+      <SectionOne categories={response.data ?? []} />
     </>
   );
 }

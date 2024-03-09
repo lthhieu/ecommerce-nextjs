@@ -17,5 +17,8 @@ declare global {
         "updatedAt"?: string,
         "__v"?: number
     }
+    interface ICategoriesWithIcons extends ICategories {
+        icon: React.ReactNode
+    }
 }
 export { };

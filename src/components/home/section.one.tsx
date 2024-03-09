@@ -4,7 +4,22 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
-import Slider from "./section.one/slider";
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
+import SmartphoneIcon from '@mui/icons-material/Smartphone';
+import TabletMacIcon from '@mui/icons-material/TabletMac';
+import LaptopIcon from '@mui/icons-material/Laptop';
+import HeadphonesIcon from '@mui/icons-material/Headphones';
+import PersonalVideoIcon from '@mui/icons-material/PersonalVideo';
+import PrintIcon from '@mui/icons-material/Print';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import SpeakerIcon from '@mui/icons-material/Speaker';
+import { useEffect, useState } from "react";
+import CustomSlider from "./section.one/custom.slider";
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
@@ -14,22 +29,51 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 interface IProps {
-    categories: ICategories[]
+    categories: ICategories[] | []
 }
 
 const SectionOne = (props: IProps) => {
     const { categories } = props;
-    console.log(categories)
+    const [categoriesWithIcons, setCategoriesWithIcons] = useState<ICategoriesWithIcons[] | []>([])
+    const icons = [<SmartphoneIcon />, <TabletMacIcon />, <LaptopIcon />, <HeadphonesIcon />, <PersonalVideoIcon />, <PrintIcon />, <PhotoCameraIcon />, <SpeakerIcon />]
+    useEffect(() => {
+        if (categories.length > 0) {
+            setCategoriesWithIcons(categories.map((i: ICategories, idx: number) => {
+                return { ...i, icon: icons[idx] }
+            }))
+        }
+    }, [categories])
     return (
         <Container sx={{ mt: 2 }}>
             <Box sx={{ flexGrow: 1 }}>
                 <Grid container spacing={2}>
                     <Grid sx={{ display: { xs: 'none', md: 'block' } }} md={4}>
-                        <Item sx={{ height: '100%' }}>all collections</Item>
+                        <Item>
+                            <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                                <nav aria-label="main mailbox folders">
+                                    <List subheader={<ListItemText sx={{ mb: 1 }} primary='Collections' primaryTypographyProps={{ fontSize: 20, fontWeight: 'medium' }} />}>
+                                        <Divider />
+                                        {categoriesWithIcons.length > 0 && categoriesWithIcons.map((category) => {
+                                            return (
+                                                <ListItem key={category._id} sx={{ pb: 0 }}>
+                                                    <ListItemButton>
+                                                        <ListItemIcon>
+                                                            {category.icon}
+                                                        </ListItemIcon>
+                                                        <ListItemText primary={category.title} />
+                                                    </ListItemButton>
+                                                </ListItem>
+                                            )
+                                        })}
+                                    </List>
+                                </nav>
+                            </Box>
+                        </Item>
                     </Grid>
                     <Grid xs={12} md={8}>
-                        <Item>
-                            <Slider />
+                        <Item sx={{ height: '100%' }}>
+                            {/* <Slider /> */}
+                            <CustomSlider />
                         </Item>
                     </Grid>
                 </Grid>
