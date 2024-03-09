@@ -11,14 +11,52 @@ declare global {
     interface ICategories {
         "_id": string,
         "title": string,
-        "image"?: string,
-        "slug"?: string,
-        "createdAt"?: string,
-        "updatedAt"?: string,
-        "__v"?: number
+        "image": string,
+        "slug": string,
+        "createdAt": string,
+        "updatedAt": string,
+        "__v": number
     }
     interface ICategoriesWithIcons extends ICategories {
         icon: React.ReactNode
+    }
+    interface IPagination<T> {
+        "meta": {
+            "current": number,
+            "pageSize": number,
+            "pages": number,
+            "total": number
+        },
+        "result": T
+    }
+    interface IProducts {
+        "_id": string,
+        "title": string,
+        "slug": string,
+        "description": string[],
+        "brand": {
+            "_id": string,
+            "title": string
+        },
+        "price": number,
+        "category": {
+            "_id": string,
+            "title": string
+        },
+        "quantity": number,
+        "sold": number,
+        "thumb": string,
+        "images": string[],
+        "variants": any[],
+        "information": {
+            "warranty": string,
+            "delivery": string
+        },
+        "ratings": [],
+        "totalRating": number,
+        "createdAt": string,
+        "updatedAt": string,
+        "__v": number
     }
 }
 export { };
