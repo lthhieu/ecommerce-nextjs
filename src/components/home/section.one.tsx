@@ -1,6 +1,6 @@
 'use client'
-import { Container } from "@mui/material"
 import { styled } from '@mui/material/styles';
+import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -20,6 +20,10 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import SpeakerIcon from '@mui/icons-material/Speaker';
 import { useEffect, useState } from "react";
 import CustomSlider from "./section.one/custom.slider";
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
@@ -70,9 +74,33 @@ const SectionOne = (props: IProps) => {
                             </Box>
                         </Item>
                     </Grid>
+                    <Grid sx={{ display: { xs: 'block', md: 'none' } }} xs={12}>
+                        <Accordion>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1-content"
+                                id="panel1-header"
+                            >
+                                Collections
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                {categoriesWithIcons.length > 0 && categoriesWithIcons.map((category) => {
+                                    return (
+                                        <ListItem key={category._id} disablePadding>
+                                            <ListItemButton>
+                                                <ListItemIcon>
+                                                    {category.icon}
+                                                </ListItemIcon>
+                                                <ListItemText primary={category.title} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                    )
+                                })}
+                            </AccordionDetails>
+                        </Accordion>
+                    </Grid>
                     <Grid xs={12} md={8}>
                         <Item sx={{ height: '100%' }}>
-                            {/* <Slider /> */}
                             <CustomSlider />
                         </Item>
                     </Grid>

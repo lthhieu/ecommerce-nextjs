@@ -6,6 +6,7 @@ export default async function Home() {
   return (
     <>
       <SectionOne categories={response.data ?? []} />
+      <div style={{ height: '500px' }}></div>
     </>
   );
 }

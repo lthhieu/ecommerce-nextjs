@@ -5,7 +5,6 @@ import Slider, { CustomArrowProps, Settings } from "react-slick";
 import { Box, Button } from "@mui/material";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import Image from "next/image";
 import {
     createTheme,
     ThemeProvider,
