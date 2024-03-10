@@ -7,10 +7,8 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { ThemeProvider } from '@mui/material/styles';
 import Image from "next/image";
-import { addCommas, convertNumberToList, removeNonNumeric } from "@/utils/helper";
-import StarIcon from '@mui/icons-material/Star';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
-import StarHalfIcon from '@mui/icons-material/StarHalf';
+import { addCommas, removeNonNumeric } from "@/utils/helper";
+import Rating from '@mui/material/Rating';
 import { theme } from "@/utils/styles";
 const SampleNextArrow = (props: CustomArrowProps) => {
     const { onClick } = props;
@@ -102,13 +100,7 @@ const CustomSlider = (props: IProps) => {
                             </Box>
                             <Box sx={{ paddingX: 2, paddingBottom: 2, width: 1 }}>
                                 <Typography sx={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} fontWeight={500} fontSize={17}>{item.title}</Typography>
-                                <Typography>{convertNumberToList(item.totalRating).map((value, index) => {
-                                    return (
-                                        <Typography component={'span'} sx={{ color: '#ffb400', marginLeft: '-1px' }} key={index} >
-                                            {value === 1 ? <StarIcon sx={{ fontSize: "18px" }} /> : value === 0 ? <StarBorderIcon sx={{ fontSize: "18px" }} /> : <StarHalfIcon sx={{ fontSize: "18px" }} />}
-                                        </Typography>
-                                    )
-                                })}</Typography>
+                                <Rating sx={{ marginLeft: '-1px' }} size="small" name="read-only" value={item.totalRating} readOnly />
                                 <Typography>{addCommas(removeNonNumeric(item.price))} VND</Typography>
                             </Box>
                         </Box>
