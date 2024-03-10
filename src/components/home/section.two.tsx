@@ -5,6 +5,8 @@ import Box from '@mui/material/Box';
 import { useState } from 'react';
 import Container from '@mui/material/Container';
 import CustomSlider from './section.two/custom.slider';
+import { ThemeProvider } from '@mui/material';
+import { theme1 } from '@/utils/styles';
 interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
@@ -52,10 +54,13 @@ export default function SectionTwo(props: IProps) {
         <Container sx={{ mt: 1 }}>
             <Box sx={{ width: 1 }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                        <Tab label="Best Seller" {...a11yProps(0)} />
-                        <Tab label="New Arrival" {...a11yProps(1)} />
-                    </Tabs>
+                    <ThemeProvider theme={theme1}>
+                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                            <Tab label="Best Seller" {...a11yProps(0)} />
+                            <Tab label="New Arrival" {...a11yProps(1)} />
+                        </Tabs>
+                    </ThemeProvider>
+
                 </Box>
                 <CustomTabPanel value={value} index={0}>
                     <CustomSlider data={bestSeller} />
