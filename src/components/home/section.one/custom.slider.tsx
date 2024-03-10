@@ -61,11 +61,11 @@ const CustomSlider = () => {
     }
     return (
         <Slider {...settings}>
-            <Box sx={{ width: '100%', height: { xs: '250px', md: '490px' } }}>
-                <Box sx={{ width: '100%', backgroundRepeat: 'no-repeat', backgroundSize: 'contain', backgroundPosition: 'center', backgroundImage: `url('https://digital-world-2.myshopify.com/cdn/shop/files/slideshow3-home2_1920x.jpg?v=1613166679')`, height: '100%' }}></Box>
+            <Box sx={{ width: 1, height: { xs: '250px', md: '490px' } }}>
+                <Box sx={{ width: 1, backgroundRepeat: 'no-repeat', backgroundSize: 'contain', backgroundPosition: 'center', backgroundImage: `url('https://digital-world-2.myshopify.com/cdn/shop/files/slideshow3-home2_1920x.jpg?v=1613166679')`, height: '100%' }}></Box>
             </Box>
-            <Box sx={{ width: '100%', height: { xs: '250px', md: '490px' } }}>
-                <Box sx={{ width: '100%', backgroundRepeat: 'no-repeat', backgroundSize: 'contain', backgroundPosition: 'center', backgroundImage: `url('https://digital-world-2.myshopify.com/cdn/shop/files/slideshow3-home2_1920x.jpg?v=1613166679')`, height: '100%' }}></Box>
+            <Box sx={{ width: 1, height: { xs: '250px', md: '490px' } }}>
+                <Box sx={{ width: 1, backgroundRepeat: 'no-repeat', backgroundSize: 'contain', backgroundPosition: 'center', backgroundImage: `url('https://digital-world-2.myshopify.com/cdn/shop/files/slideshow3-home2_1920x.jpg?v=1613166679')`, height: '100%' }}></Box>
             </Box>
         </Slider>
     )

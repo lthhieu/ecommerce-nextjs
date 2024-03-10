@@ -53,7 +53,7 @@ const SectionOne = (props: IProps) => {
                 <Grid container spacing={2}>
                     <Grid sx={{ display: { xs: 'none', md: 'block' } }} md={4}>
                         <Item>
-                            <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                            <Box sx={{ width: 1, maxWidth: 360, bgcolor: 'background.paper' }}>
                                 <nav aria-label="main mailbox folders">
                                     <List subheader={<ListItemText sx={{ mb: 1 }} primary='Collections' primaryTypographyProps={{ fontSize: 20, fontWeight: 'medium' }} />}>
                                         <Divider />

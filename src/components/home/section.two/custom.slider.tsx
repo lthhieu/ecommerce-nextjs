@@ -100,7 +100,7 @@ const CustomSlider = (props: IProps) => {
                             <Box sx={{ marginTop: 1 }}>
                                 <Image src={item.thumb} alt="image" width={250} height={250} style={{ objectFit: 'contain' }} />
                             </Box>
-                            <Box sx={{ paddingX: 2, paddingBottom: 2, width: '100%' }}>
+                            <Box sx={{ paddingX: 2, paddingBottom: 2, width: 1 }}>
                                 <Typography sx={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} fontWeight={500} fontSize={17}>{item.title}</Typography>
                                 <Typography>{convertNumberToList(item.totalRating).map((value, index) => {
                                     return (

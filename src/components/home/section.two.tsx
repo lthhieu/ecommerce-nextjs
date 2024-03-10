@@ -50,7 +50,7 @@ export default function SectionTwo(props: IProps) {
 
     return (
         <Container sx={{ mt: 1 }}>
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{ width: 1 }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                         <Tab label="Best Seller" {...a11yProps(0)} />
