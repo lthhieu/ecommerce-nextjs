@@ -49,7 +49,7 @@ function Header() {
             backgroundColor: alpha(theme.palette.common.white, 0.25),
         },
         marginLeft: 0,
-        width: 1,
+        width: '100%',
         [theme.breakpoints.up('sm')]: {
             marginLeft: theme.spacing(1),
             width: 'auto',
@@ -67,7 +67,7 @@ function Header() {
     }));
     const StyledInputBase = styled(InputBase)(({ theme }) => ({
         color: 'inherit',
-        width: 1,
+        width: '100%',
         '& .MuiInputBase-input': {
             padding: theme.spacing(1, 1, 1, 0),
             // vertical padding + font size from searchIcon
