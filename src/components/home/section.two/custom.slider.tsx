@@ -5,46 +5,13 @@ import Slider, { CustomArrowProps, Settings } from "react-slick";
 import { Box, Button, Typography } from "@mui/material";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import {
-    createTheme,
-    ThemeProvider,
-    alpha,
-    getContrastRatio,
-} from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import Image from "next/image";
 import { addCommas, convertNumberToList, removeNonNumeric } from "@/utils/helper";
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
-// Augment the palette to include a violet color
-declare module '@mui/material/styles' {
-    interface Palette {
-        violet: Palette['primary'];
-    }
-
-    interface PaletteOptions {
-        violet?: PaletteOptions['primary'];
-    }
-}
-// Update the Button's color options to include a violet option
-declare module '@mui/material/Button' {
-    interface ButtonPropsColorOverrides {
-        violet: true;
-    }
-}
-
-const violetBase = '#7F00FF';
-const violetMain = alpha(violetBase, 0.7);
-const theme = createTheme({
-    palette: {
-        violet: {
-            main: violetMain,
-            light: alpha(violetBase, 0.5),
-            dark: alpha(violetBase, 0.9),
-            contrastText: getContrastRatio(violetMain, '#fff') > 4.5 ? '#fff' : '#111',
-        },
-    },
-});
+import { theme } from "@/utils/styles";
 const SampleNextArrow = (props: CustomArrowProps) => {
     const { onClick } = props;
     return (
@@ -133,8 +100,8 @@ const CustomSlider = (props: IProps) => {
                             <Box sx={{ marginTop: 1 }}>
                                 <Image src={item.thumb} alt="image" width={250} height={250} style={{ objectFit: 'contain' }} />
                             </Box>
-                            <Box sx={{ paddingLeft: 2, paddingBottom: 2, width: '100%' }}>
-                                <Typography fontWeight={500} fontSize={17}>{item.title}</Typography>
+                            <Box sx={{ paddingX: 2, paddingBottom: 2, width: '100%' }}>
+                                <Typography sx={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} fontWeight={500} fontSize={17}>{item.title}</Typography>
                                 <Typography>{convertNumberToList(item.totalRating).map((value, index) => {
                                     return (
                                         <Typography component={'span'} sx={{ color: '#ffb400', marginLeft: '-1px' }} key={index} >
