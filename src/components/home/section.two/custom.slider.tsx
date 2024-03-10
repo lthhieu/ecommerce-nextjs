@@ -17,7 +17,7 @@ const SampleNextArrow = (props: CustomArrowProps) => {
     return (
         <ThemeProvider theme={theme}>
             <Button sx={{
-                borderRadius: '100%',
+                borderRadius: '50%',
                 position: 'absolute',
                 top: '45%',
                 right: '-1%',
@@ -39,7 +39,7 @@ const SamplePrevArrow = (props: CustomArrowProps) => {
     return (
         <ThemeProvider theme={theme}>
             <Button sx={{
-                borderRadius: '100%',
+                borderRadius: '50%',
                 position: 'absolute',
                 top: '45%',
                 left: '-1%',
