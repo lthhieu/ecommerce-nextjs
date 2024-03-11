@@ -44,7 +44,6 @@ export default async function Home() {
       <SectionTwo bestSeller={response[1]?.data?.result ?? []} newArrival={response[2]?.data?.result ?? []} />
       <FeaturedProducts featuredProducts={response[3]?.data?.result ?? []} />
       <HotCollections categoriesWithBrands={categoriesWithBrands} />
-      <div style={{ height: '500px' }}></div>
     </>
   );
 }

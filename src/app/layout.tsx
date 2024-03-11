@@ -5,6 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import theme from '@/theme';
 import Header from '@/components/header/header';
 import { StoreProvider } from './StoreProvider';
+import Footer from '@/components/footer/footer';
 
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
@@ -17,6 +18,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
               <CssBaseline />
               <Header />
               {props.children}
+              <Footer />
             </ThemeProvider>
           </AppRouterCacheProvider>
         </body>
