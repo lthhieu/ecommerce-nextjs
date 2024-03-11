@@ -1,5 +1,7 @@
 // https://mui.com/material-ui/customization/palette/
 import { createTheme, alpha, getContrastRatio, } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
 // Augment the palette to include a violet color
 declare module '@mui/material/styles' {
     interface Palette {
@@ -36,9 +38,8 @@ export const theme1 = createTheme({
             styleOverrides: {
                 indicator: {
                     backgroundColor: '#7F00FF',
-                    height: 3,
+                    height: 2,
                 },
-
             }
         },
         MuiTab: {
@@ -52,3 +53,11 @@ export const theme1 = createTheme({
         }
     },
 });
+
+export const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+}));
