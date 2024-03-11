@@ -58,5 +58,13 @@ declare global {
         "updatedAt": string,
         "__v": number
     }
+    interface IBrands {
+        _id: string,
+        title: string
+    }
+    interface ICollections {
+        category: ICategories,
+        brands: IBrands[]
+    }
 }
 export { };
