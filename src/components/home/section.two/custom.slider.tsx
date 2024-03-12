@@ -10,6 +10,7 @@ import Image from "next/image";
 import { addCommas, removeNonNumeric } from "@/utils/helper";
 import Rating from '@mui/material/Rating';
 import { theme } from "@/utils/styles";
+import Link from "next/link";
 const SampleNextArrow = (props: CustomArrowProps) => {
     const { onClick } = props;
     return (
@@ -94,16 +95,18 @@ const CustomSlider = (props: IProps) => {
             {data.length > 0 && data.map((item) => {
                 return (
                     <Box key={item._id} sx={{ marginLeft: -1, marginTop: 2 }}>
-                        <Box sx={{ marginLeft: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', border: '1px solid #e0e0e0', borderRadius: 1 }}>
-                            <Box sx={{ marginTop: 1 }}>
-                                <Image src={item.thumb} alt="image" width={250} height={250} style={{ objectFit: 'contain' }} />
+                        <Link href={`/collections/${item.category.title.toLowerCase()}/products/${item._id}`}>
+                            <Box sx={{ marginLeft: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                                <Box sx={{ marginTop: 1 }}>
+                                    <Image src={item.thumb} alt="image" width={250} height={250} style={{ objectFit: 'contain' }} />
+                                </Box>
+                                <Box sx={{ paddingX: 2, paddingBottom: 2, width: 1 }}>
+                                    <Typography sx={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} fontWeight={500} fontSize={17}>{item.title}</Typography>
+                                    <Rating sx={{ marginLeft: '-1px' }} size="small" name="read-only" value={item.totalRating} readOnly />
+                                    <Typography>{addCommas(removeNonNumeric(item.price))} VND</Typography>
+                                </Box>
                             </Box>
-                            <Box sx={{ paddingX: 2, paddingBottom: 2, width: 1 }}>
-                                <Typography sx={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} fontWeight={500} fontSize={17}>{item.title}</Typography>
-                                <Rating sx={{ marginLeft: '-1px' }} size="small" name="read-only" value={item.totalRating} readOnly />
-                                <Typography>{addCommas(removeNonNumeric(item.price))} VND</Typography>
-                            </Box>
-                        </Box>
+                        </Link>
                     </Box>
                 )
             })}
