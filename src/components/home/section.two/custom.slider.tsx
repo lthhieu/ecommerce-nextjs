@@ -95,7 +95,7 @@ const CustomSlider = (props: IProps) => {
             {data.length > 0 && data.map((item) => {
                 return (
                     <Box key={item._id} sx={{ marginLeft: -1, marginTop: 2 }}>
-                        <Link href={`/collections/${item.category.title.toLowerCase()}/products/${item._id}`}>
+                        <Link style={{ textDecoration: 'unset', color: 'unset' }} href={`/collections/${item.category.title.toLowerCase()}/products/${item.slug}_${item._id}.html`}>
                             <Box sx={{ marginLeft: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', border: '1px solid #e0e0e0', borderRadius: 1 }}>
                                 <Box sx={{ marginTop: 1 }}>
                                     <Image src={item.thumb} alt="image" width={250} height={250} style={{ objectFit: 'contain' }} />

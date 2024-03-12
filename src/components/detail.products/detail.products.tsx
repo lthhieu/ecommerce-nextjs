@@ -3,34 +3,29 @@ import Container from "@mui/material/Container"
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Link from '@mui/material/Link';
+import Link from "next/link";
+import { capitalizeFirstLetter } from "@/utils/helper";
 
-function handleClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-    event.preventDefault();
-    console.info('You clicked a breadcrumb.');
-}
 interface IProps {
-    slug: string
+    data: null | IProducts
 }
 const DetailProducts = (props: IProps) => {
-    const { slug } = props;
+    const { data } = props;
     return (
         <Container sx={{ mt: 2 }}>
-            <div role="presentation" onClick={handleClick}>
-                <Breadcrumbs aria-label="breadcrumb">
-                    <Link underline="hover" color="inherit" href="/">
-                        MUI
-                    </Link>
-                    <Link
-                        underline="hover"
-                        color="inherit"
-                        href="/material-ui/getting-started/installation/"
-                    >
-                        Core
-                    </Link>
-                    <Typography color="text.primary">Breadcrumbs</Typography>
-                </Breadcrumbs>
-            </div>
+            <Breadcrumbs separator="›" aria-label="breadcrumb">
+                <Link href="/" style={{ textDecoration: 'unset', color: 'unset' }}>
+                    Home
+                </Link>
+                <Link
+                    style={{ textDecoration: 'unset', color: 'unset' }}
+                    href={`/collections/${data?.category.title.toLowerCase()}`}
+                >
+                    {capitalizeFirstLetter(data?.category.title || 'category')}
+                </Link>
+                <Typography color="text.primary">{data?.title || 'Product'}</Typography>
+            </Breadcrumbs>
+            {/* <RouterBreadcrumbs /> */}
         </Container>
     )
 }
