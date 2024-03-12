@@ -25,11 +25,59 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useRouter } from 'next/navigation'
+import useScrollTrigger from '@mui/material/useScrollTrigger';
+import Fade from '@mui/material/Fade';
+import Fab from '@mui/material/Fab';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+interface Props {
+    /**
+     * Injected by the documentation to work in an iframe.
+     * You won't need it on your project.
+     */
+    window?: () => Window;
+    children?: React.ReactElement;
+}
+function ScrollTop(props: Props) {
+    const { children, window } = props;
+    // Note that you normally won't need to set the window ref as useScrollTrigger
+    // will default to window.
+    // This is only being set here because the demo is in an iframe.
+    const trigger = useScrollTrigger({
+        target: window ? window() : undefined,
+        disableHysteresis: true,
+        threshold: 100,
+    });
+
+    const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+        const anchor = (
+            (event.target as HTMLDivElement).ownerDocument || document
+        ).querySelector('#back-to-top-anchor');
+
+        if (anchor) {
+            anchor.scrollIntoView({
+                block: 'center',
+                behavior: 'smooth',
+            });
+        }
+    };
+
+    return (
+        <Fade in={trigger}>
+            <Box
+                onClick={handleClick}
+                role="presentation"
+                sx={{ position: 'fixed', bottom: 16, right: 16 }}
+            >
+                {children}
+            </Box>
+        </Fade>
+    );
+}
 
 const pages = ['products', 'introduction', 'blog'];
 const settings = ['dashboard', 'logout'];
 
-function Header() {
+function Header(props: Props) {
     const router = useRouter();
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -105,10 +153,10 @@ function Header() {
         </Box>
     );
 
-    return (
+    return (<>
         <AppBar position="static" sx={{ backgroundColor: '#7F00FF' }}>
             <Container>
-                <Toolbar disableGutters>
+                <Toolbar disableGutters id="back-to-top-anchor">
                     <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
                     <Typography
                         variant="h6"
@@ -244,6 +292,13 @@ function Header() {
                 </Toolbar>
             </Container>
         </AppBar>
+        <ScrollTop {...props}>
+            <Fab size="small" aria-label="scroll back to top">
+                <KeyboardArrowUpIcon />
+            </Fab>
+        </ScrollTop>
+    </>
+
     );
 }
 export default Header;

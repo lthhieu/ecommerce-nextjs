@@ -17,7 +17,7 @@ const HotCollections = (props: IProps) => {
         <Container sx={{ mt: 1 }}>
             <Typography sx={{ py: 1, textTransform: 'uppercase', fontWeight: 500, fontSize: '16px' }}>hot collections</Typography>
             <Divider color="#7F00FF" sx={{ height: 2 }} />
-            <Box sx={{ flexGrow: 1, mt: 2 }}>
+            <Box sx={{ flexGrow: 1, my: 2 }}>
                 <Grid container spacing={2}>
                     {categoriesWithBrands.map((item) => {
                         return (

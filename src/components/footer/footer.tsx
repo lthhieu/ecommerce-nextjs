@@ -109,28 +109,44 @@ function Footer() {
         <AppBar position="static" sx={{ backgroundColor: '#343a40', mt: 2 }}>
             <Container>
                 <Toolbar disableGutters>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                    <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: { xs: 'none', md: 'space-between' }, flexDirection: { xs: 'column', md: 'row' } }}>
                         <Typography
                             noWrap
                             sx={{
-                                display: { xs: 'none', md: 'flex' },
                                 fontFamily: 'monospace',
                             }}
                         >
                             Copyright &copy;2024, Ly Tran Hoang Hieu
                         </Typography>
-                    </Box>
-
-                    <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
                         <Typography
                             noWrap
                             sx={{
-                                display: { xs: 'none', md: 'flex' },
                                 fontFamily: 'monospace',
                             }}
                         >
-                            Everything you need                        </Typography>
+                            Everything you need
+                        </Typography>
                     </Box>
+                    {/* <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column' }}>
+                        <Typography
+                            noWrap
+                            sx={{
+                                fontFamily: 'monospace',
+                                fontSize: '12px'
+                            }}
+                        >
+                            Copyright &copy;2024, Ly Tran Hoang Hieu
+                        </Typography>
+                        <Typography
+                            noWrap
+                            sx={{
+                                fontFamily: 'monospace',
+                                fontSize: '12px'
+                            }}
+                        >
+                            Everything you need
+                        </Typography>
+                    </Box> */}
                 </Toolbar>
             </Container>
         </AppBar>
