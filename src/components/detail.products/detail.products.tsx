@@ -18,21 +18,6 @@ import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import ExtraInfo from "./extra.info";
 
-const images: ReactImageGalleryItem[] = [
-    {
-        original: "https://picsum.photos/id/1018/1000/600/",
-        thumbnail: "https://picsum.photos/id/1018/250/150/",
-    },
-    {
-        original: "https://picsum.photos/id/1015/1000/600/",
-        thumbnail: "https://picsum.photos/id/1015/250/150/",
-    },
-    {
-        original: "https://picsum.photos/id/1019/1000/600/",
-        thumbnail: "https://picsum.photos/id/1019/250/150/",
-    },
-];
-
 interface INav {
     onClick: React.MouseEventHandler<HTMLElement>,
     disabled: boolean
@@ -110,6 +95,19 @@ interface IProps {
 }
 const DetailProducts = (props: IProps) => {
     const { data } = props;
+    const [images, setImages] = React.useState<ReactImageGalleryItem[] | null>(null)
+    React.useEffect(() => {
+        if (data?.images && data?.images.length > 0) {
+            setImages(data.images.map((i) => {
+                return {
+                    original: i,
+                    thumbnail: i,
+                    originalHeight: 400,
+                    originalWidth: 600
+                }
+            }))
+        }
+    }, [data])
     return (
         <Container sx={{ mt: 2 }}>
             <Breadcrumbs separator="›" aria-label="breadcrumb">
@@ -136,7 +134,7 @@ const DetailProducts = (props: IProps) => {
                         renderFullscreenButton={(onClick, isFullscreen) => (
                             <Fullscreen onClick={onClick} isFullscreen={isFullscreen} />
                         )}
-                        showPlayButton={false} items={images} />
+                        showPlayButton={false} items={images || []} />
                 </Box>
                 <Box sx={{ width: '60%', display: 'flex' }}>
                     <Box sx={{ width: '62.5%' }}>
