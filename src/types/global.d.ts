@@ -47,7 +47,10 @@ declare global {
         "sold": number,
         "thumb": string,
         "images": string[],
-        "variants": any[],
+        "variants": {
+            label?: string,
+            variants?: string[]
+        }[],
         "information": {
             "warranty": string,
             "delivery": string

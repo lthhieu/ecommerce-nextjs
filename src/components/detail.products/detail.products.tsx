@@ -4,7 +4,7 @@ import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from "next/link";
-import { capitalizeFirstLetter } from "@/utils/helper";
+import { addCommas, capitalizeFirstLetter, removeNonNumeric } from "@/utils/helper";
 import "react-image-gallery/styles/css/image-gallery.css";
 import './style.css'
 import ImageGallery, { ReactImageGalleryItem } from "react-image-gallery";
@@ -17,6 +17,8 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import ExtraInfo from "./extra.info";
+import { ButtonGroup, List, ListItemAvatar, ListItemIcon, ListItemText, Rating } from "@mui/material";
+import StopIcon from '@mui/icons-material/Stop';
 
 interface INav {
     onClick: React.MouseEventHandler<HTMLElement>,
@@ -108,6 +110,7 @@ const DetailProducts = (props: IProps) => {
             }))
         }
     }, [data])
+
     return (
         <Container sx={{ mt: 2 }}>
             <Breadcrumbs separator="›" aria-label="breadcrumb">
@@ -137,8 +140,40 @@ const DetailProducts = (props: IProps) => {
                         showPlayButton={false} items={images || []} />
                 </Box>
                 <Box sx={{ width: '60%', display: 'flex' }}>
-                    <Box sx={{ width: '62.5%' }}>
-                        info
+                    <Box sx={{ width: '62.5%', pl: 4, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                        <Typography sx={{ fontSize: '35px', fontWeight: 500 }}>{addCommas(removeNonNumeric(data?.price ?? 0))} VND</Typography>
+                        <Rating sx={{ marginLeft: '-1px' }} size="medium" value={data?.totalRating ?? 0} readOnly />
+                        <List>
+                            {data?.description && data?.description.length > 0 && data?.description.map((item) => {
+                                return (
+                                    <Box key={item} sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <ListItemIcon sx={{ minWidth: '26px' }}><StopIcon fontSize="small" /></ListItemIcon>
+                                        <ListItemText primary={item} />
+                                    </Box>
+                                )
+                            })}
+                        </List>
+                        {data?.variants && data?.variants.length > 0 && data.variants.map((item, idx) => {
+                            let [isChoose, setIsChoose] = React.useState(0)
+                            const handleClick = (idx: number) => {
+                                setIsChoose(idx)
+                            }
+                            return (
+                                <Box key={idx} sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                                    <Typography sx={{ fontWeight: 500 }}>{item.label}</Typography>
+                                    <Box sx={{ display: 'flex', gap: 1 }} >
+                                        {item.variants && item.variants.length > 0 && item.variants.map((value, idx) => {
+                                            return (
+                                                <Button onClick={() => { handleClick(idx) }} variant={isChoose === idx ? 'outlined' : 'text'} key={value}>{value}</Button>
+                                            )
+                                        })}
+                                    </Box>
+                                </Box>
+                            )
+                        })}
+                        <Box>
+                            <Typography sx={{ fontWeight: 500, textTransform: 'capitalize' }}>quantity</Typography>
+                        </Box>
                     </Box>
                     <Box sx={{ width: "37.5%" }}>
                         <ExtraInfo />
