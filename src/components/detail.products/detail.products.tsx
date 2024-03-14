@@ -149,8 +149,8 @@ const DetailProducts = (props: IProps) => {
                 </Link>
                 <Typography color="text.primary">{data?.title || 'Product'}</Typography>
             </Breadcrumbs>
-            <Box sx={{ mt: 2, display: 'flex' }}>
-                <Box sx={{ width: '40%' }}>
+            <Box sx={{ mt: 2, display: { md: 'flex', xs: 'block' } }}>
+                <Box sx={{ width: { md: '40%', xs: '100%' } }}>
                     <ImageGallery
                         renderLeftNav={(onClick, disabled) => (
                             <LeftNav onClick={onClick} disabled={disabled} />
@@ -163,8 +163,8 @@ const DetailProducts = (props: IProps) => {
                         )}
                         showPlayButton={false} items={images || []} />
                 </Box>
-                <Box sx={{ width: '60%', display: 'flex' }}>
-                    <Box sx={{ width: '62.5%', pl: 4, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                <Box sx={{ width: { md: '60%', xs: '100%' }, display: { md: 'flex', xs: 'block' } }}>
+                    <Box sx={{ width: { md: '62.5%', xs: '100%' }, mt: { md: 0, xs: 2 }, pl: 4, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                         <Typography sx={{ fontSize: '35px', fontWeight: 500 }}>{addCommas(removeNonNumeric(data?.price ?? 0))} VND</Typography>
                         <Box sx={{ display: 'flex', gap: 1 }}>
                             <Rating sx={{ marginLeft: '-1px' }} size="medium" value={data?.totalRating ?? 0} readOnly />
@@ -218,7 +218,7 @@ const DetailProducts = (props: IProps) => {
                             </ThemeProvider>
                         </Box>
                     </Box>
-                    <Box sx={{ width: "37.5%" }}>
+                    <Box sx={{ width: { md: '37.5%', xs: '100%' }, mt: { md: 0, xs: 2 } }}>
                         <ExtraInfo />
                     </Box>
                 </Box>
