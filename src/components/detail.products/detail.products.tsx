@@ -17,8 +17,15 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import ExtraInfo from "./extra.info";
-import { ButtonGroup, List, ListItemAvatar, ListItemIcon, ListItemText, Rating } from "@mui/material";
+import List from "@mui/material/List";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Rating from "@mui/material/Rating";
+import TextField from "@mui/material/TextField";
+
 import StopIcon from '@mui/icons-material/Stop';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 interface INav {
     onClick: React.MouseEventHandler<HTMLElement>,
@@ -98,6 +105,8 @@ interface IProps {
 const DetailProducts = (props: IProps) => {
     const { data } = props;
     const [images, setImages] = React.useState<ReactImageGalleryItem[] | null>(null)
+    const [quantity, setQuantity] = React.useState<number>(1)
+
     React.useEffect(() => {
         if (data?.images && data?.images.length > 0) {
             setImages(data.images.map((i) => {
@@ -110,6 +119,21 @@ const DetailProducts = (props: IProps) => {
             }))
         }
     }, [data])
+
+    const calc = (sign: string) => {
+        if (sign === 'increase') {
+            setQuantity(prev => prev + 1)
+        }
+        else {
+            if (sign === 'decrease') {
+                if (quantity === 1) return
+                setQuantity(prev => prev - 1)
+            } else {
+                if (!Number(sign)) { setQuantity(1) }
+                else { setQuantity(+sign) }
+            }
+        }
+    }
 
     return (
         <Container sx={{ mt: 2 }}>
@@ -142,7 +166,10 @@ const DetailProducts = (props: IProps) => {
                 <Box sx={{ width: '60%', display: 'flex' }}>
                     <Box sx={{ width: '62.5%', pl: 4, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                         <Typography sx={{ fontSize: '35px', fontWeight: 500 }}>{addCommas(removeNonNumeric(data?.price ?? 0))} VND</Typography>
-                        <Rating sx={{ marginLeft: '-1px' }} size="medium" value={data?.totalRating ?? 0} readOnly />
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                            <Rating sx={{ marginLeft: '-1px' }} size="medium" value={data?.totalRating ?? 0} readOnly />
+                            <Typography color={"red"} fontStyle={"italic"}>Sold: {data?.sold}</Typography>
+                        </Box>
                         <List>
                             {data?.description && data?.description.length > 0 && data?.description.map((item) => {
                                 return (
@@ -171,8 +198,13 @@ const DetailProducts = (props: IProps) => {
                                 </Box>
                             )
                         })}
-                        <Box>
+                        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                             <Typography sx={{ fontWeight: 500, textTransform: 'capitalize' }}>quantity</Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', p: 1 }}>
+                                <Button onClick={() => { calc('decrease') }}><RemoveIcon fontSize="small" sx={{ cursor: 'pointer' }} /></Button>
+                                <TextField onChange={(e) => { calc(e.target.value) }} value={quantity} sx={{ maxWidth: '60px', '& .MuiInput-root .mui-1x51dt5-MuiInputBase-input-MuiInput-input': { textAlign: 'center' } }} variant="standard" />
+                                <Button onClick={() => { calc('increase') }}><AddIcon fontSize="small" sx={{ cursor: 'pointer' }} /></Button>
+                            </Box>
                         </Box>
                     </Box>
                     <Box sx={{ width: "37.5%" }}>
