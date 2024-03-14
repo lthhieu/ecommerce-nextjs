@@ -191,7 +191,9 @@ const DetailProducts = (props: IProps) => {
                                     <Box sx={{ display: 'flex', gap: 1 }} >
                                         {item.variants && item.variants.length > 0 && item.variants.map((value, idx) => {
                                             return (
-                                                <Button onClick={() => { handleClick(idx) }} variant={isChoose === idx ? 'outlined' : 'text'} key={value}>{value}</Button>
+                                                <ThemeProvider theme={theme}>
+                                                    <Button onClick={() => { handleClick(idx) }} variant={isChoose === idx ? 'outlined' : 'text'} color="violet" key={value}>{value}</Button>
+                                                </ThemeProvider>
                                             )
                                         })}
                                     </Box>
@@ -201,10 +203,19 @@ const DetailProducts = (props: IProps) => {
                         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                             <Typography sx={{ fontWeight: 500, textTransform: 'capitalize' }}>quantity</Typography>
                             <Box sx={{ display: 'flex', alignItems: 'center', p: 1 }}>
-                                <Button onClick={() => { calc('decrease') }}><RemoveIcon fontSize="small" sx={{ cursor: 'pointer' }} /></Button>
+                                <ThemeProvider theme={theme}>
+                                    <Button color="violet" onClick={() => { calc('decrease') }}><RemoveIcon fontSize="small" /></Button>
+                                </ThemeProvider>
                                 <TextField onChange={(e) => { calc(e.target.value) }} value={quantity} sx={{ maxWidth: '60px', '& .MuiInput-root .mui-1x51dt5-MuiInputBase-input-MuiInput-input': { textAlign: 'center' } }} variant="standard" />
-                                <Button onClick={() => { calc('increase') }}><AddIcon fontSize="small" sx={{ cursor: 'pointer' }} /></Button>
+                                <ThemeProvider theme={theme}>
+                                    <Button color="violet" onClick={() => { calc('increase') }}><AddIcon fontSize="small" /></Button>
+                                </ThemeProvider>
                             </Box>
+                        </Box>
+                        <Box sx={{ width: '100%' }}>
+                            <ThemeProvider theme={theme}>
+                                <Button sx={{ width: '100%' }} color="violet" variant="contained" onClick={() => { console.log('hi') }}>Add to cart</Button>
+                            </ThemeProvider>
                         </Box>
                     </Box>
                     <Box sx={{ width: "37.5%" }}>
