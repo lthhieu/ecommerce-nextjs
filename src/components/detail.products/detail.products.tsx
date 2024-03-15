@@ -22,10 +22,13 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Rating from "@mui/material/Rating";
 import TextField from "@mui/material/TextField";
-
+import { theme1 } from '@/utils/styles';
 import StopIcon from '@mui/icons-material/Stop';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import { CustomTabPanel } from "../home/section.two";
 
 interface INav {
     onClick: React.MouseEventHandler<HTMLElement>,
@@ -106,6 +109,7 @@ const DetailProducts = (props: IProps) => {
     const { data } = props;
     const [images, setImages] = React.useState<ReactImageGalleryItem[] | null>(null)
     const [quantity, setQuantity] = React.useState<number>(1)
+    const [value, setValue] = React.useState(0);
 
     React.useEffect(() => {
         if (data?.images && data?.images.length > 0) {
@@ -134,6 +138,9 @@ const DetailProducts = (props: IProps) => {
             }
         }
     }
+    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+        setValue(newValue);
+    };
 
     return (
         <Container sx={{ mt: 2 }}>
@@ -191,8 +198,8 @@ const DetailProducts = (props: IProps) => {
                                     <Box sx={{ display: 'flex', gap: 1 }} >
                                         {item.variants && item.variants.length > 0 && item.variants.map((value, idx) => {
                                             return (
-                                                <ThemeProvider theme={theme}>
-                                                    <Button onClick={() => { handleClick(idx) }} variant={isChoose === idx ? 'outlined' : 'text'} color="violet" key={value}>{value}</Button>
+                                                <ThemeProvider key={idx} theme={theme}>
+                                                    <Button onClick={() => { handleClick(idx) }} variant={isChoose === idx ? 'outlined' : 'text'} color="violet">{value}</Button>
                                                 </ThemeProvider>
                                             )
                                         })}
@@ -222,8 +229,26 @@ const DetailProducts = (props: IProps) => {
                         <ExtraInfo />
                     </Box>
                 </Box>
-
             </Box>
+            <Box sx={{ mt: 1 }}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <ThemeProvider theme={theme1}>
+                        <Tabs value={value} onChange={handleChange} aria-label="information">
+                            <Tab label="warranty" />
+                            <Tab label="delivery" />
+                        </Tabs>
+                    </ThemeProvider>
+
+                </Box>
+                <CustomTabPanel value={value} index={0}>
+                    {<Box dangerouslySetInnerHTML={{ __html: data?.information.warranty || '' }}></Box>}
+                </CustomTabPanel>
+                <CustomTabPanel value={value} index={1}>
+                    {<Box dangerouslySetInnerHTML={{ __html: data?.information.delivery || '' }}></Box>}
+
+                </CustomTabPanel>
+            </Box>
+            <Box sx={{ height: '500px' }}></Box>
         </Container>
     )
 }
