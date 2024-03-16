@@ -29,6 +29,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { CustomTabPanel } from "../home/section.two";
+import PeopleAlsoBuy from "./people.also.buy";
 
 interface INav {
     onClick: React.MouseEventHandler<HTMLElement>,
@@ -103,10 +104,11 @@ const Fullscreen = (props: IFull) => {
 }
 
 interface IProps {
-    data: null | IProducts
+    data: null | IProducts,
+    productsByCategory: null | IProducts[],
 }
 const DetailProducts = (props: IProps) => {
-    const { data } = props;
+    const { data, productsByCategory } = props;
     const [images, setImages] = React.useState<ReactImageGalleryItem[] | null>(null)
     const [quantity, setQuantity] = React.useState<number>(1)
     const [value, setValue] = React.useState(0);
@@ -213,7 +215,7 @@ const DetailProducts = (props: IProps) => {
                                 <ThemeProvider theme={theme}>
                                     <Button color="violet" onClick={() => { calc('decrease') }}><RemoveIcon fontSize="small" /></Button>
                                 </ThemeProvider>
-                                <TextField onChange={(e) => { calc(e.target.value) }} value={quantity} sx={{ maxWidth: '60px', '& .MuiInput-root .mui-1x51dt5-MuiInputBase-input-MuiInput-input': { textAlign: 'center' } }} variant="standard" />
+                                <TextField onChange={(e) => { calc(e.target.value) }} value={quantity} sx={{ maxWidth: '60px', '& .MuiInput-input': { textAlign: 'center' } }} variant="standard" />
                                 <ThemeProvider theme={theme}>
                                     <Button color="violet" onClick={() => { calc('increase') }}><AddIcon fontSize="small" /></Button>
                                 </ThemeProvider>
@@ -245,10 +247,9 @@ const DetailProducts = (props: IProps) => {
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={1}>
                     {<Box dangerouslySetInnerHTML={{ __html: data?.information.delivery || '' }}></Box>}
-
                 </CustomTabPanel>
             </Box>
-            <Box sx={{ height: '500px' }}></Box>
+            <PeopleAlsoBuy productsByCategory={productsByCategory} />
         </Container>
     )
 }
