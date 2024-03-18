@@ -3,7 +3,7 @@ import ky from 'ky';
 // On https://my-site.com
 
 export const api = ky.create({
-    prefixUrl: 'http://localhost:8000/api/v1',
+    prefixUrl: process.env.BACKEND_URI,
     // hooks: {
     //     afterResponse: [
     //         (_request, _options, response) => {

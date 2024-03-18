@@ -57,9 +57,9 @@ export default function SignIn() {
                 <Typography component="h1" variant="h5">
                     Sign in
                 </Typography>
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-                    <CssTextField margin="normal" fullWidth label="Email Address" autoFocus />
-                    <CssTextField margin="normal" fullWidth label="Password" />
+                <Box component="form" noValidate sx={{ mt: 1 }}>
+                    <CssTextField margin="normal" fullWidth label="Email Address" autoFocus name="email" />
+                    <CssTextField margin="normal" fullWidth label="Password" type="password" name="password" />
                     <ThemeProvider theme={theme}>
                         <Button type="submit"
                             fullWidth sx={{
