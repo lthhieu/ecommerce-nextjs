@@ -2,6 +2,7 @@
 import { createTheme, alpha, getContrastRatio, } from '@mui/material/styles';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
+import TextField, { TextFieldProps } from '@mui/material/TextField';
 // Augment the palette to include a violet color
 declare module '@mui/material/styles' {
     interface Palette {
@@ -61,3 +62,20 @@ export const Item = styled(Paper)(({ theme }) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
 }));
+
+export const CssTextField = styled(TextField)({
+    '& label.Mui-focused': {
+        color: '#7F00FF',
+    },
+    '& .MuiOutlinedInput-root': {
+        '& fieldset': {
+            borderColor: '#E0E3E7',
+        },
+        '&:hover fieldset': {
+            borderColor: '#B2BAC2',
+        },
+        '&.Mui-focused fieldset': {
+            borderColor: '#7F00FF',
+        },
+    },
+});
