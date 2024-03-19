@@ -3,9 +3,8 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from '@/theme';
-import Header from '@/components/header/header';
 import { StoreProvider } from './StoreProvider';
-import Footer from '@/components/footer/footer';
+import NextAuthWrapper from '@/lib/next.auth.wrapper';
 
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
@@ -16,7 +15,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             <ThemeProvider theme={theme}>
               {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
               <CssBaseline />
-              {props.children}
+              <NextAuthWrapper>
+                {props.children}
+              </NextAuthWrapper>
             </ThemeProvider>
           </AppRouterCacheProvider>
         </body>

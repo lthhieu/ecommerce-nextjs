@@ -29,19 +29,13 @@ import useScrollTrigger from '@mui/material/useScrollTrigger';
 import Fade from '@mui/material/Fade';
 import Fab from '@mui/material/Fab';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { useSession } from "next-auth/react"
 interface Props {
-    /**
-     * Injected by the documentation to work in an iframe.
-     * You won't need it on your project.
-     */
     window?: () => Window;
     children?: React.ReactElement;
 }
 function ScrollTop(props: Props) {
     const { children, window } = props;
-    // Note that you normally won't need to set the window ref as useScrollTrigger
-    // will default to window.
-    // This is only being set here because the demo is in an iframe.
     const trigger = useScrollTrigger({
         target: window ? window() : undefined,
         disableHysteresis: true,
@@ -78,6 +72,8 @@ const pages = ['products', 'introduction', 'blog'];
 const settings = ['dashboard', 'logout'];
 
 function Header(props: Props) {
+    const { data: session } = useSession()
+    console.log('check session', session)
     const router = useRouter();
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
