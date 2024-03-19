@@ -3,8 +3,12 @@ import HotCollections from "@/components/home/hot.collections";
 import SectionOne from "@/components/home/section.one";
 import SectionTwo from "@/components/home/section.two";
 import { api } from "@/utils/api";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export default async function Home() {
+  const session = await getServerSession(authOptions)
+  console.log('hieu >>>', session)
   const response = await Promise.all([
     api.get('categories').json<IBackendResponse<ICategories[]>>(),
     api.get('products?current=1&pageSize=5&sort=-sold').json<IBackendResponse<IPagination<IProducts[]>>>(),

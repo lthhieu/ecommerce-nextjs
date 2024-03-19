@@ -11,7 +11,7 @@ export const authOptions: AuthOptions = {
     ],
     callbacks: {
         async jwt({ token, user, account, profile }) {
-            console.log('hi', token, user, account, profile)
+            // console.log('hi', token, user, account, profile)
             return token
 
         }
