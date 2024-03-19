@@ -73,7 +73,6 @@ const settings = ['dashboard', 'logout'];
 
 function Header(props: Props) {
     const { data: session } = useSession()
-    console.log('check session', session)
     const router = useRouter();
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -227,11 +226,13 @@ function Header(props: Props) {
                                 inputProps={{ 'aria-label': 'search' }}
                             />
                         </Search>
-                        <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar>H</Avatar>
-                            </IconButton>
-                        </Tooltip>
+                        {session ? <>
+                            <Tooltip title="Open settings">
+                                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                    <Avatar alt={session.user?.name || 'photo'} src={session.user?.image || ''}></Avatar>
+                                </IconButton>
+                            </Tooltip></> : <>
+                            <Link style={{ padding: '10px', color: 'white', display: 'block', textDecoration: 'unset' }} href={`/api/auth/signin`}>Login</Link></>}
                         <Menu
                             sx={{ mt: '45px' }}
                             id="menu-appbar"
@@ -257,11 +258,13 @@ function Header(props: Props) {
                     </Box>
 
                     <Box sx={{ flexGrow: 0, display: { xs: 'flex', md: 'none' } }}>
-                        <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar>H</Avatar>
-                            </IconButton>
-                        </Tooltip>
+                        {session ? <>
+                            <Tooltip title="Open settings">
+                                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                    <Avatar alt={session.user?.name || 'photo'} src={session.user?.image || ''}></Avatar>
+                                </IconButton>
+                            </Tooltip></> : <>
+                            <Link style={{ padding: '10px', color: 'white', display: 'block', textDecoration: 'unset' }} href={`/api/auth/signin`}>Login</Link></>}
                         <Menu
                             sx={{ mt: '45px' }}
                             id="menu-appbar"
