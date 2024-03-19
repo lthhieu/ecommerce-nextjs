@@ -29,7 +29,8 @@ import useScrollTrigger from '@mui/material/useScrollTrigger';
 import Fade from '@mui/material/Fade';
 import Fab from '@mui/material/Fab';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useSession } from "next-auth/react"
+import { useSession, signIn, signOut } from "next-auth/react"
+
 interface Props {
     window?: () => Window;
     children?: React.ReactElement;
@@ -80,7 +81,10 @@ function Header(props: Props) {
         setAnchorElUser(event.currentTarget);
     };
 
-    const handleCloseUserMenu = () => {
+    const handleCloseUserMenu = (sign: string) => {
+        if (sign === 'logout') {
+            signOut()
+        }
         setAnchorElUser(null);
     };
 
@@ -250,7 +254,7 @@ function Header(props: Props) {
                             onClose={handleCloseUserMenu}
                         >
                             {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
                                     <Typography textTransform={"capitalize"} textAlign="center">{setting}</Typography>
                                 </MenuItem>
                             ))}
@@ -264,7 +268,7 @@ function Header(props: Props) {
                                     <Avatar alt={session.user?.name || 'photo'} src={session.user?.image || ''}></Avatar>
                                 </IconButton>
                             </Tooltip></> : <>
-                            <Link style={{ padding: '10px', color: 'white', display: 'block', textDecoration: 'unset' }} href={`/api/auth/signin`}>Login</Link></>}
+                            <Link onClick={() => signIn()} style={{ padding: '10px', color: 'white', display: 'block', textDecoration: 'unset' }} href={'#'}>Login</Link></>}
                         <Menu
                             sx={{ mt: '45px' }}
                             id="menu-appbar"
@@ -282,7 +286,7 @@ function Header(props: Props) {
                             onClose={handleCloseUserMenu}
                         >
                             {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
                                     <Typography textTransform={"capitalize"} textAlign="center">{setting}</Typography>
                                 </MenuItem>
                             ))}
