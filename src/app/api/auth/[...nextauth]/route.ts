@@ -10,11 +10,20 @@ export const authOptions: AuthOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token, user, account, profile }) {
-            // console.log('hi', token, user, account, profile)
-            return token
+        async jwt({ token, account, user, trigger }) {
+            if (trigger === 'signIn' && account?.provider !== 'credentials') {
+                token.access_token = 'fake token'
+                token.refresh_token = 'fake token'
 
-        }
+            }
+            return token
+        },
+        async session({ session, user, token }) {
+            if (session) {
+                session.access_token = token.access_token
+            }
+            return session
+        },
     }
 }
 const handler = NextAuth(authOptions)
