@@ -27,6 +27,11 @@ declare module "next-auth" {
         "refresh_token": string,
         user: IUser & DefaultSession["user"]
     }
+    interface User {
+        "access_token": string,
+        "refresh_token": string,
+        user: IUser & DefaultSession["user"]
+    }
 }
 declare module "next-auth/jwt" {
     /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
