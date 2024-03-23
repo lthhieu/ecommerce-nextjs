@@ -237,7 +237,7 @@ function Header(props: Props) {
                                     <Avatar alt={session.user?.name || 'photo'} src={session.user?.image || ''}></Avatar>
                                 </IconButton>
                             </Tooltip></> : <>
-                            <Link style={{ padding: '10px', color: 'white', display: 'block', textDecoration: 'unset' }} href={`/api/auth/signin`}>Login</Link></>}
+                            <Link style={{ padding: '10px', color: 'white', display: 'block', textDecoration: 'unset' }} href={`/login`}>Login</Link></>}
                         <Menu
                             sx={{ mt: '45px' }}
                             id="menu-appbar"
@@ -269,7 +269,7 @@ function Header(props: Props) {
                                     <Avatar alt={session.user?.name || 'photo'} src={session.user?.image || ''}></Avatar>
                                 </IconButton>
                             </Tooltip></> : <>
-                            <Link onClick={() => signIn()} style={{ padding: '10px', color: 'white', display: 'block', textDecoration: 'unset' }} href={'#'}>Login</Link></>}
+                            <Link style={{ padding: '10px', color: 'white', display: 'block', textDecoration: 'unset' }} href={'/login'}>Login</Link></>}
                         <Menu
                             sx={{ mt: '45px' }}
                             id="menu-appbar"
