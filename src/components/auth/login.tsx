@@ -8,9 +8,19 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { ThemeProvider } from '@mui/material/styles';
-import { CssTextField, theme } from '@/utils/styles';
+import { CssTextField, Item, theme } from '@/utils/styles';
 import ReplyIcon from '@mui/icons-material/Reply';
 import Link from 'next/link';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Chip from '@mui/material/Chip';
+import Divider from '@mui/material/Divider';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import GoogleIcon from '@mui/icons-material/Google';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import Tooltip from '@mui/material/Tooltip';
 
 function Copyright(props: any) {
     return (
@@ -27,6 +37,11 @@ function Copyright(props: any) {
 }
 
 export default function SignIn() {
+    const [showPassword, setShowPassword] = React.useState(false);
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -37,13 +52,13 @@ export default function SignIn() {
     };
 
     return (
-        <Container component="main" maxWidth="xs">
-            <Box
+        <Container component="main" sx={{ height: '100vh', display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center' }}>
+            <Item
                 sx={{
-                    marginTop: 8,
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
+                    alignItems: 'center', p: 4,
+                    width: { md: '60%', xs: '100%' }
                 }}
             >
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
@@ -57,23 +72,45 @@ export default function SignIn() {
                 <Typography component="h1" variant="h5">
                     Sign in
                 </Typography>
-                <Box component="form" noValidate sx={{ mt: 1 }}>
-                    <CssTextField margin="normal" fullWidth label="Email Address" autoFocus name="email" />
-                    <CssTextField margin="normal" fullWidth label="Password" type="password" name="password" />
+                <Box component="form" noValidate sx={{ mt: 1, width: '100%' }}>
+                    <CssTextField required helperText="Incorrect entry." error margin="normal" fullWidth label="Email Address" autoFocus name="email" />
+                    <CssTextField required helperText="Incorrect entry." error margin="normal" fullWidth label="Password" type={showPassword ? 'text' : 'password'} name="password"
+                        InputProps={{
+                            endAdornment: <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={handleClickShowPassword}
+                                    onMouseDown={handleMouseDownPassword}
+                                    edge="end"
+                                >
+                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                        }}
+
+                    />
                     <ThemeProvider theme={theme}>
                         <Button type="submit"
                             fullWidth sx={{
-                                mt: 3, mb: 2
+                                my: 2,
                             }} variant="contained" color="violet"> Sign In</Button>
                     </ThemeProvider>
-                    <Grid container>
-                        <Grid item xs>
+                    <Grid>
+                        <Divider><Chip label="Or using" size="small" /></Divider>
+                        <Box sx={{ display: 'flex', gap: 2, width: '100%', justifyContent: 'center', py: 1 }}>
+                            <Tooltip title="Sign in with Github"><GitHubIcon fontSize='large' sx={{ color: '#1f2328', cursor: 'pointer' }} /></Tooltip>
+                            <Tooltip title="Sign in with Google"><GoogleIcon fontSize='large' sx={{ color: '#ea4335', cursor: 'pointer' }} /></Tooltip>
+                            <Tooltip title="Sign in with Facebook"><FacebookIcon fontSize='large' sx={{ color: '#0866ff', cursor: 'pointer' }} /></Tooltip>
+                        </Box>
+                    </Grid>
+                    <Grid container sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Grid>
                             <Link href="#" style={{ color: 'unset', textDecoration: 'unset' }} onMouseEnter={(e) => (e.target as HTMLInputElement).style.color = '#7F00FF'}
                                 onMouseLeave={(e) => (e.target as HTMLInputElement).style.color = 'unset'}>
                                 Forgot password?
                             </Link>
                         </Grid>
-                        <Grid item>
+                        <Grid>
                             <Link href="#" style={{ color: 'unset', textDecoration: 'unset' }} onMouseEnter={(e) => (e.target as HTMLInputElement).style.color = '#7F00FF'}
                                 onMouseLeave={(e) => (e.target as HTMLInputElement).style.color = 'unset'}>
                                 {"Don't have an account? Sign Up"}
@@ -81,7 +118,7 @@ export default function SignIn() {
                         </Grid>
                     </Grid>
                 </Box>
-            </Box>
+            </Item>
             <Copyright sx={{ mt: 8, mb: 4 }} />
         </Container>
     );

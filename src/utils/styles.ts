@@ -2,7 +2,7 @@
 import { createTheme, alpha, getContrastRatio, } from '@mui/material/styles';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
-import TextField, { TextFieldProps } from '@mui/material/TextField';
+import TextField from '@mui/material/TextField';
 // Augment the palette to include a violet color
 declare module '@mui/material/styles' {
     interface Palette {
