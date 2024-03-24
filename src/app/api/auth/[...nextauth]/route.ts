@@ -15,15 +15,31 @@ export const authOptions: AuthOptions = {
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials, req) {
-                const response = await api.post(`auth/login`, { json: { username: credentials?.username, password: credentials?.password } }).json<IBackendResponse<JWT>>()
-
-                if (response && response.data) {
+                const response = await api.post(`auth/login`, {
+                    json: { username: credentials?.username, password: credentials?.password }
+                }).json<IBackendResponse<JWT>>()
+                // const response = await fetch('http://localhost:8000/api/v1/auth/login', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     },
+                //     body: JSON.stringify({
+                //         username: credentials?.username,
+                //         password: credentials?.password,
+                //     })
+                // })
+                // const result = await response.json()
+                // console.log(result)
+                console.log(response)
+                if (response) {
                     // Any object returned will be saved in `user` property of the JWT
+                    //@ts-ignore
                     return response.data as any
                 } else {
                     // If you return null then an error will be displayed advising the user to check their details.
                     return null
-
+                    //@ts-ignore
+                    // throw new Error(response.message as string)
                     // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
                 }
             }

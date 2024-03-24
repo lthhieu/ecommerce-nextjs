@@ -23,6 +23,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import Tooltip from '@mui/material/Tooltip';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { signIn } from "next-auth/react"
 function Copyright(props: any) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -73,8 +74,14 @@ export default function SignIn() {
                             password: Yup.string().required('Required'),
                         })}
                         onSubmit={(values, { setSubmitting }) => {
-                            setTimeout(() => {
-                                alert(JSON.stringify(values, null, 2));
+                            // console.log(JSON.stringify(values))
+
+                            setTimeout(async () => {
+                                const response = await signIn('credentials', {
+                                    username: values.email, password: values.password,
+                                    redirect: false,
+                                })
+                                console.log(response)
                                 setSubmitting(false);
                             }, 400);
                         }}
@@ -83,7 +90,7 @@ export default function SignIn() {
                             <form onSubmit={formik.handleSubmit}>
                                 <CssTextField
                                     {...formik.getFieldProps('email')}
-                                    required helperText={formik.errors.email} error={formik.touched.email && formik.errors.email ? true : false} margin="normal" fullWidth label="Email Address" autoFocus name='email' />
+                                    required helperText={formik.errors.email} error={formik.touched.email && formik.errors.email ? true : false} margin="normal" fullWidth label="Email Address" name='email' />
                                 <CssTextField
                                     {...formik.getFieldProps('password')}
                                     required helperText={formik.errors.password} error={formik.touched.password && formik.errors.password ? true : false} margin="normal" fullWidth label="Password" type={showPassword ? 'text' : 'password'} name='password'
@@ -113,7 +120,7 @@ export default function SignIn() {
                 <Grid>
                     <Divider><Chip label="Or using" size="small" /></Divider>
                     <Box sx={{ display: 'flex', gap: 2, width: '100%', justifyContent: 'center', py: 1 }}>
-                        <Tooltip title="Sign in with Github"><GitHubIcon fontSize='large' sx={{ color: '#1f2328', cursor: 'pointer' }} /></Tooltip>
+                        <Tooltip title="Sign in with Github"><GitHubIcon onClick={() => signIn("github")} fontSize='large' sx={{ color: '#1f2328', cursor: 'pointer' }} /></Tooltip>
                         <Tooltip title="Sign in with Google"><GoogleIcon fontSize='large' sx={{ color: '#ea4335', cursor: 'pointer' }} /></Tooltip>
                         <Tooltip title="Sign in with Facebook"><FacebookIcon fontSize='large' sx={{ color: '#0866ff', cursor: 'pointer' }} /></Tooltip>
                     </Box>
