@@ -4,7 +4,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from '@/theme';
 import { StoreProvider } from './StoreProvider';
-import NextAuthWrapper from '@/lib/next.auth.wrapper';
+import NextAuthWrapper from '@/utils/next.auth.wrapper';
 
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
