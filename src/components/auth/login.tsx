@@ -1,7 +1,6 @@
 'use client'
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -26,6 +25,7 @@ import * as Yup from 'yup';
 import { signIn } from "next-auth/react"
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/utils/toast.mui';
+import LoadingButton from '@mui/lab/LoadingButton';
 function Copyright(props: any) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -93,7 +93,7 @@ export default function SignIn() {
                             }, 400);
                         }}
                     >
-                        {formik => (
+                        {(formik) => (
                             <form onSubmit={formik.handleSubmit}>
                                 <CssTextField
                                     {...formik.getFieldProps('email')}
@@ -116,16 +116,23 @@ export default function SignIn() {
                                     }}
                                 />
                                 <ThemeProvider theme={theme}>
-                                    <Button type="submit"
+                                    <LoadingButton
+                                        type="submit"
+                                        loading={formik.isSubmitting}
                                         fullWidth sx={{
                                             my: 2,
-                                        }} variant="contained" color="violet"> Sign In</Button>
+                                        }}
+                                        color="violet"
+                                        variant="contained"
+                                    >
+                                        <span>Sign In</span>
+                                    </LoadingButton>
                                 </ThemeProvider>
                             </form>
                         )}
                     </Formik>
                 </Box>
-                <Grid>
+                <Grid sx={{ width: '100%' }}>
                     <Divider><Chip label="Or using" size="small" /></Divider>
                     <Box sx={{ display: 'flex', gap: 2, width: '100%', justifyContent: 'center', py: 1 }}>
                         <Tooltip title="Sign in with Github"><GitHubIcon onClick={() => signIn("github")} fontSize='large' sx={{ color: '#1f2328', cursor: 'pointer' }} /></Tooltip>
