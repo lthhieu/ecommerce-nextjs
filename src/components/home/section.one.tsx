@@ -24,6 +24,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Link from 'next/link';
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
@@ -59,14 +60,15 @@ const SectionOne = (props: IProps) => {
                                         <Divider />
                                         {categoriesWithIcons.length > 0 && categoriesWithIcons.map((category) => {
                                             return (
-                                                <ListItem key={category._id} sx={{ pb: 0 }}>
-                                                    <ListItemButton>
-                                                        <ListItemIcon>
-                                                            {category.icon}
-                                                        </ListItemIcon>
-                                                        <ListItemText primary={category.title} />
-                                                    </ListItemButton>
-                                                </ListItem>
+                                                <Link key={category._id} style={{ color: 'unset', textDecoration: 'unset' }} href={`/collections/${category.slug}_${category._id}.html`}>
+                                                    <ListItem sx={{ pb: 0 }}>
+                                                        <ListItemButton>
+                                                            <ListItemIcon>
+                                                                {category.icon}
+                                                            </ListItemIcon>
+                                                            <ListItemText primary={category.title} />
+                                                        </ListItemButton>
+                                                    </ListItem></Link>
                                             )
                                         })}
                                     </List>
@@ -86,14 +88,15 @@ const SectionOne = (props: IProps) => {
                             <AccordionDetails>
                                 {categoriesWithIcons.length > 0 && categoriesWithIcons.map((category) => {
                                     return (
-                                        <ListItem key={category._id} disablePadding>
-                                            <ListItemButton>
-                                                <ListItemIcon>
-                                                    {category.icon}
-                                                </ListItemIcon>
-                                                <ListItemText primary={category.title} />
-                                            </ListItemButton>
-                                        </ListItem>
+                                        <Link key={category._id} style={{ color: 'unset', textDecoration: 'unset' }} href={`/collections/${category.slug}_${category._id}.html`}>
+                                            <ListItem sx={{ pb: 0 }}>
+                                                <ListItemButton>
+                                                    <ListItemIcon>
+                                                        {category.icon}
+                                                    </ListItemIcon>
+                                                    <ListItemText primary={category.title} />
+                                                </ListItemButton>
+                                            </ListItem></Link>
                                     )
                                 })}
                             </AccordionDetails>

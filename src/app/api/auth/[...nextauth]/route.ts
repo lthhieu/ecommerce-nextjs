@@ -1,4 +1,4 @@
-import { api, externalApi } from "@/utils/api"
+import { externalApi } from "@/utils/api"
 import NextAuth, { AuthOptions, User } from "next-auth"
 import { JWT } from "next-auth/jwt"
 import GithubProvider from "next-auth/providers/github"
@@ -33,7 +33,9 @@ export const authOptions: AuthOptions = {
     callbacks: {
         async jwt({ token, account, user, trigger }) {
             if (trigger === 'signIn' && account?.provider !== 'credentials') {
-                const response = await api.post(`auth/providers`, { json: { type: account?.provider.toUpperCase(), username: user.email } }).json<IBackendResponse<JWT>>()
+                const response = await externalApi.url('/auth/providers').post({
+                    type: account?.provider.toUpperCase(), username: user.email
+                }).json<IBackendResponse<JWT>>()
                 if (response.data) {
                     token.access_token = response.data.access_token
                     token.refresh_token = response.data.refresh_token

@@ -2,7 +2,7 @@ import FeaturedProducts from "@/components/home/featured.products";
 import HotCollections from "@/components/home/hot.collections";
 import SectionOne from "@/components/home/section.one";
 import SectionTwo from "@/components/home/section.two";
-import { api } from "@/utils/api";
+import { externalApi } from "@/utils/api";
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
@@ -10,10 +10,10 @@ export default async function Home() {
   const session = await getServerSession(authOptions)
   // console.log('hieu >>>', session)
   const response = await Promise.all([
-    api.get('categories').json<IBackendResponse<ICategories[]>>(),
-    api.get('products?current=1&pageSize=5&sort=-sold').json<IBackendResponse<IPagination<IProducts[]>>>(),
-    api.get('products?current=1&pageSize=5').json<IBackendResponse<IPagination<IProducts[]>>>(),
-    api.get('products?current=1&pageSize=9&totalRating=5').json<IBackendResponse<IPagination<IProducts[]>>>()
+    externalApi.url('/categories').get().json<IBackendResponse<ICategories[]>>(),
+    externalApi.url('/products?current=1&pageSize=5&sort=-sold').get().json<IBackendResponse<IPagination<IProducts[]>>>(),
+    externalApi.url('/products?current=1&pageSize=5').get().json<IBackendResponse<IPagination<IProducts[]>>>(),
+    externalApi.url('/products?current=1&pageSize=9&totalRating=5').get().json<IBackendResponse<IPagination<IProducts[]>>>()
   ])
 
   let categoriesWithBrands: ICollections[] = []
@@ -21,7 +21,7 @@ export default async function Home() {
   if (response[0] && response[0].data && response[0].data?.length > 0) {
     let result = []
     for (let i = 0; i < 6; i++) {
-      const res = await Promise.resolve(api.get(`products?current=1&pageSize=100&category=${response[0].data[i]._id}`).json<IBackendResponse<IPagination<IProducts[]>>>())
+      const res = await Promise.resolve(externalApi.url(`/products?current=1&pageSize=100&category=${response[0].data[i]._id}`).get().json<IBackendResponse<IPagination<IProducts[]>>>())
 
       const data = res.data?.result
       const brands = data && data.map((element) => element.brand);

@@ -31,9 +31,10 @@ import CustomImageGallery from "./custom.image.gallery";
 interface IProps {
     data: null | IProducts,
     productsByCategory: null | IProducts[],
+    category: null | ICategories
 }
 const DetailProducts = (props: IProps) => {
-    const { data, productsByCategory } = props;
+    const { data, productsByCategory, category } = props;
     const [images, setImages] = React.useState<ReactImageGalleryItem[] | null>(null)
     const [quantity, setQuantity] = React.useState<number>(1)
     const [value, setValue] = React.useState(0);
@@ -77,7 +78,7 @@ const DetailProducts = (props: IProps) => {
                 </Link>
                 <Link
                     style={{ textDecoration: 'unset', color: 'unset' }}
-                    href={`/collections/${data?.category.title.toLowerCase()}`}
+                    href={`/collections/${category?.slug}_${category?._id}.html`}
                 >
                     {capitalizeFirstLetter(data?.category.title || 'category')}
                 </Link>
