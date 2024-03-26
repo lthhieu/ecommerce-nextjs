@@ -5,6 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import theme from '@/theme';
 import { StoreProvider } from './StoreProvider';
 import NextAuthWrapper from '@/utils/next.auth.wrapper';
+import { ToastProvider } from '@/utils/toast.mui';
 
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
@@ -16,7 +17,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
               {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
               <CssBaseline />
               <NextAuthWrapper>
-                {props.children}
+                <ToastProvider>
+                  {props.children}
+                </ToastProvider>
               </NextAuthWrapper>
             </ThemeProvider>
           </AppRouterCacheProvider>

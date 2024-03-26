@@ -24,6 +24,8 @@ import Tooltip from '@mui/material/Tooltip';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { signIn } from "next-auth/react"
+import { useRouter } from 'next/navigation'
+import { useToast } from '@/utils/toast.mui';
 function Copyright(props: any) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -39,6 +41,8 @@ function Copyright(props: any) {
 }
 
 export default function SignIn() {
+    const router = useRouter()
+    const toast = useToast()
     const [showPassword, setShowPassword] = React.useState(false);
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -52,7 +56,8 @@ export default function SignIn() {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center', p: 4,
-                    width: { md: '60%', xs: '100%' }
+                    width: { md: '60%', xs: '100%' },
+                    boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 7px 0px"
                 }}
             >
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
@@ -74,14 +79,16 @@ export default function SignIn() {
                             password: Yup.string().required('Required'),
                         })}
                         onSubmit={(values, { setSubmitting }) => {
-                            // console.log(JSON.stringify(values))
-
                             setTimeout(async () => {
                                 const response = await signIn('credentials', {
                                     username: values.email, password: values.password,
                                     redirect: false,
                                 })
-                                console.log(response)
+                                if (!response?.error) {
+                                    router.push('/')
+                                } else {
+                                    toast.error(response.error ?? 'Invalid credentials')
+                                }
                                 setSubmitting(false);
                             }, 400);
                         }}
@@ -92,6 +99,7 @@ export default function SignIn() {
                                     {...formik.getFieldProps('email')}
                                     required helperText={formik.errors.email} error={formik.touched.email && formik.errors.email ? true : false} margin="normal" fullWidth label="Email Address" name='email' />
                                 <CssTextField
+                                    onKeyDown={(e) => { if (e.key === 'Enter') formik.handleSubmit }}
                                     {...formik.getFieldProps('password')}
                                     required helperText={formik.errors.password} error={formik.touched.password && formik.errors.password ? true : false} margin="normal" fullWidth label="Password" type={showPassword ? 'text' : 'password'} name='password'
                                     InputProps={{
