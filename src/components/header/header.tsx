@@ -74,7 +74,7 @@ const settings = ['dashboard', 'logout'];
 
 function Header(props: Props) {
     const { data: session } = useSession()
-    console.log(session)
+    // console.log(session)
     const router = useRouter();
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
