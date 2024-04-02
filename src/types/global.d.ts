@@ -69,5 +69,9 @@ declare global {
         category: ICategories,
         brands: IBrands[]
     }
+    interface IVariants {
+        label: string,
+        variants: string[]
+    }
 }
 export { };
