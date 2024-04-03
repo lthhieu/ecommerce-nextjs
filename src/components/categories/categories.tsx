@@ -17,8 +17,14 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { sortArray } from '@/utils/constant';
 import { ThemeProvider } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation'
+import _ from 'lodash';
+import { externalApi } from '@/utils/api';
 
 interface IProps {
+    idCate: string,
+    url: string,
     products: IProducts[] | null,
     category: ICategories | null,
     variants: IVariants[]
@@ -46,16 +52,38 @@ const names = [
     'Kelly Snyder',
 ];
 const Categories = (props: IProps) => {
-    const { products, category, variants } = props;
+    const { products, category, variants, url, idCate } = props;
     const [age, setAge] = useState('');
     const [priority, setPriority] = useState('');
+    const [productsState, setProductsState] = useState<IProducts[]>([])
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const sorting = searchParams.get('sort')
+    const [sort, setSort] = useState(sorting)
     useEffect(() => {
-        if (products && products?.length > 0) {
-            setPriority(sortArray[0].label)
-        }
+        setProductsState(products ?? [])
     }, [])
-    const handleView = (value: string) => {
-        setPriority(value)
+    useEffect(() => {
+        if (sort) {
+            //fetch data
+            handleSortData()
+            setPriority(_.find(sortArray, { 'value': sort })?.label ?? 'Best selling')
+        } else {
+            setPriority('Best selling')
+        }
+    }, [sort])
+    const handleSortData = async () => {
+        const response = await externalApi
+            .url(`/products?category=${idCate}&current=1&pageSize=100&sort=${sort}`)
+            .get()
+            .json<IBackendResponse<IPagination<IProducts[]>>>()
+        if (response.data) {
+            setProductsState(response.data.result)
+        }
+    }
+    const handleView = (label: string, value: string) => {
+        setSort(value)
+        router.push(`/collections/${url}?sort=${value}`)
     }
 
     const handleChange = (event: SelectChangeEvent) => {
@@ -125,7 +153,7 @@ const Categories = (props: IProps) => {
                                 {sortArray.map((item) => {
                                     return (
                                         <ThemeProvider key={item.id} theme={theme}>
-                                            <Button onClick={() => { handleView(item.label) }} variant={priority === item.label ? 'contained' : 'outlined'} sx={{ textTransform: 'capitalize' }} color="violet" >
+                                            <Button onClick={() => { handleView(item.label, item.value) }} variant={priority === item.label ? 'contained' : 'outlined'} sx={{ textTransform: 'capitalize' }} color="violet" >
                                                 {item.label}
                                             </Button>
                                         </ThemeProvider>
@@ -134,7 +162,7 @@ const Categories = (props: IProps) => {
                             </ButtonGroup>
                         </Box>
                         <Grid container spacing={2}>
-                            {products && products.length > 0 && products.map((item) => {
+                            {productsState && productsState.length > 0 && productsState.map((item) => {
                                 return (
                                     <Grid key={item._id} md={4} xs={12} sm={6}>
                                         <Item sx={{ textAlign: 'start' }}>

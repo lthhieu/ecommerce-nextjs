@@ -1,31 +1,26 @@
 import Categories from "@/components/categories/categories";
 import { externalApi } from "@/utils/api";
+import _ from "lodash";
 
 export default async function CategoryPage({ params }: { params: { category: string } }) {
-    console.log(params.category)
     const id = params.category.split('_')[1].split('.')[0] || 'fake-id'
 
     const [products, categories] = await Promise.all([
-        externalApi.url(`/products?category=${id}&current=1&pageSize=100`).get().json<IBackendResponse<IPagination<IProducts[]>>>(),
+        externalApi.url(`/products?category=${id}&current=1&pageSize=100&sort=-sold`).get().json<IBackendResponse<IPagination<IProducts[]>>>(),
         externalApi.url(`/categories/${id}`).get().json<IBackendResponse<ICategories>>()
     ])
     let data: IVariants[] = []
     if (products) {
-        const rawData = products.data?.result.map(item => item.variants)
-        rawData?.map(item => {
-            item.map((v) => {
+        const rawData = _.map(_.get(products, 'data.result', []), 'variants')
+        _.forEach(rawData, item => {
+            _.forEach(item, v => {
                 if (v.label && v.variants) {
-                    if (!data.some(item => item.label === v.label)) {
+                    const isExistedLabel = _.findIndex(data, { label: v.label })
+                    if (isExistedLabel === -1) {
                         data.push({ label: v.label, variants: v.variants })
                     } else {
-                        let temp = data.find(item => item.label === v.label)
-                        if (temp?.variants) {
-                            for (let i = 0; i < v?.variants?.length; i++) {
-                                if (!temp?.variants.includes(v.variants[i])) {
-                                    temp?.variants.push(v.variants[i])
-                                }
-                            }
-                        }
+                        let temp = data[isExistedLabel]
+                        temp.variants = _.union(temp.variants, v.variants)
                     }
                 }
             })
@@ -33,6 +28,8 @@ export default async function CategoryPage({ params }: { params: { category: str
     }
     return (
         <Categories
+            idCate={id}
+            url={params.category}
             variants={data}
             products={products.data?.result ?? null} category={categories.data ?? null} />
     )
