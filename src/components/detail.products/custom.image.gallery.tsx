@@ -27,7 +27,7 @@ const LeftNav = (props: INav) => {
                 display: 'flex',
                 height: '40px',
                 minWidth: '40px',
-                zIndex: 4000,
+                zIndex: 2,
                 alignItems: 'center',
                 justifyContent: 'center',
                 px: 0

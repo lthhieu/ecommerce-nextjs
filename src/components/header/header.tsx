@@ -137,7 +137,7 @@ function Header(props: Props) {
     };
 
     const DrawerList = (
-        <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+        <Box sx={{ width: 250, zIndex: 10 }} role="presentation" onClick={toggleDrawer(false)}>
             <List>
                 {pages.map((text) => (
                     <ListItem key={text} disablePadding>

@@ -88,23 +88,6 @@ function Footer() {
         setOpen(newOpen);
     };
 
-    const DrawerList = (
-        <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
-            <List>
-                {pages.map((text) => (
-                    <ListItem key={text} disablePadding>
-                        <ListItemButton onClick={() => router.push(`/${text}`)}>
-                            <ListItemIcon>
-                                <ChevronRightIcon />
-                            </ListItemIcon>
-                            <ListItemText sx={{ textTransform: 'capitalize' }} primary={text} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-            </List>
-        </Box>
-    );
-
     return (
         <AppBar position="static" sx={{ backgroundColor: '#343a40', mt: 2 }}>
             <Container>

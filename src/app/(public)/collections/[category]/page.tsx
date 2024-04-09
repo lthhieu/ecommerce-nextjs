@@ -29,7 +29,6 @@ export default async function CategoryPage({ params }: { params: { category: str
     return (
         <Categories
             idCate={id}
-            url={params.category}
             variants={data}
             products={products.data?.result ?? null} category={categories.data ?? null} />
     )

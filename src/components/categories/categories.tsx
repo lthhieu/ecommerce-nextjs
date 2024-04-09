@@ -17,14 +17,14 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { sortArray } from '@/utils/constant';
 import { ThemeProvider } from '@mui/material';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation'
 import _ from 'lodash';
 import { externalApi } from '@/utils/api';
 
+
 interface IProps {
     idCate: string,
-    url: string,
     products: IProducts[] | null,
     category: ICategories | null,
     variants: IVariants[]
@@ -52,26 +52,105 @@ const names = [
     'Kelly Snyder',
 ];
 const Categories = (props: IProps) => {
-    const { products, category, variants, url, idCate } = props;
+    const { products, category, variants, idCate } = props;
     const [age, setAge] = useState('');
     const [priority, setPriority] = useState('');
     const [productsState, setProductsState] = useState<IProducts[]>([])
+    const [variantState, setVariantState] = useState<IVariants[]>([])
     const router = useRouter()
     const searchParams = useSearchParams()
+    const pathname = usePathname()
     const sorting = searchParams.get('sort')
     const [sort, setSort] = useState(sorting)
+
     useEffect(() => {
-        setProductsState(products ?? [])
+        const url = `${pathname}?${searchParams}`
+        // console.log(url.split('?')[1].replaceAll('%2C', ',').replaceAll('+', ' '))
+        if (url.split('?')[1] !== '') {
+            let params = _.reject(parseQueryString(url.split('?')[1].replaceAll('%2C', ',').replaceAll('+', ' ')), { label: 'Sort' })
+            if (!_.isEmpty(params)) {
+                setVariantState(params)
+            }
+        } else {
+            setProductsState(products ?? [])
+        }
     }, [])
     useEffect(() => {
-        if (sort) {
-            //fetch data
-            handleSortData()
-            setPriority(_.find(sortArray, { 'value': sort })?.label ?? 'Best selling')
-        } else {
-            setPriority('Best selling')
+        let timer = setTimeout(() => {
+            if (variantState && sort) {
+                if (variantState.length > 0 && sort) {
+                    handleFilter()
+                    let orQuery = ''
+                    _.forEach(variantState, (item, idx: number) => {
+                        orQuery += `${item.label.toLowerCase()}=${item.variants.join(',')}`
+                        orQuery += variantState.length - idx - 1 === 0 ? '' : '&'
+                    })
+                    setPriority(_.find(sortArray, { 'value': sort })?.label ?? 'Best selling')
+                    router.push(pathname + '?' + orQuery + '&sort=' + sort)
+                } else {
+                    handleSortData()
+                    setPriority(_.find(sortArray, { 'value': sort })?.label ?? 'Best selling')
+                    router.push(pathname + `?sort=${sort}`)
+                }
+            } else {
+                if (variantState.length > 0) {
+                    handleFilter()
+                    let orQuery = ''
+                    _.forEach(variantState, (item, idx: number) => {
+                        orQuery += `${item.label.toLowerCase()}=${item.variants.join(',')}`
+                        orQuery += variantState.length - idx - 1 === 0 ? '' : '&'
+                    })
+
+                    const filterQuery = orQuery !== '' ? `?${orQuery}` : ''
+                    router.push(pathname + filterQuery)
+                }
+                setPriority('Best selling')
+            }
+
+        }, 2000)
+        return () => {
+            clearTimeout(timer)
         }
-    }, [sort])
+    }, [sort, variantState])
+    function parseQueryString(str: string) {
+        const pairs = str.split('&');
+        const result: IVariants[] = [];
+
+        pairs.forEach(pair => {
+            const [key, value] = pair.split('=');
+            const obj = {} as IVariants;
+            obj.label = capitalizeFirstLetter(key);
+            obj.variants = value.split(',').map(val => val.trim());
+
+            result.push(obj);
+        });
+
+        return result;
+    }
+    const handleFilter = async () => {
+        let orQuery = [] as any
+        _.forEach(variantState, item => {
+            orQuery.push({
+                "variants.label": item.label,
+                "variants.variants": { "$in": item.variants }
+            })
+        })
+        const queryString = JSON.stringify({ "$or": orQuery });
+        const sortOrder = !sort ? "-sold" : sort
+        const filterQuery = orQuery.length > 0 ? `&filter=${queryString}` : ''
+        if (filterQuery === '') {
+            setProductsState(products ?? [])
+        } else {
+            const url = `/products?category=${idCate}&current=1&pageSize=100${filterQuery}&sort=${sortOrder}`
+            const response = await externalApi
+                .url(url)
+                .get()
+                .json<IBackendResponse<IPagination<IProducts[]>>>()
+            if (response.data) {
+                setProductsState(response.data.result ?? [])
+            }
+        }
+    }
     const handleSortData = async () => {
         const response = await externalApi
             .url(`/products?category=${idCate}&current=1&pageSize=100&sort=${sort}`)
@@ -81,21 +160,54 @@ const Categories = (props: IProps) => {
             setProductsState(response.data.result)
         }
     }
-    const handleView = (label: string, value: string) => {
+    const handleView = (value: string) => {
         setSort(value)
-        router.push(`/collections/${url}?sort=${value}`)
     }
 
     const handleChange = (event: SelectChangeEvent) => {
         setAge(event.target.value);
     };
+    const handleVariants = (label: string, value: string) => {
+        setVariantState((prev: any) => {
+            if (value === '') {
+                _.remove(variantState, { label: label })
+                return [...prev]
+            }
+            const isExistedLabel = _.findIndex(variantState, { label: label })
+            if (isExistedLabel === -1) {
+                return [...prev, { label: label, variants: [value] }]
+            } else {
+                let temp = variantState[isExistedLabel]
+                if (temp.variants.includes(value)) {
+                    _.pull(temp.variants, value)
+                    if (_.isEmpty(temp.variants)) {
+                        _.pull(variantState, temp)
+                    }
+                } else {
+                    const other = _.concat(temp.variants, value)
+                    _.pull(variantState, temp)
+                    return [...prev, { label: label, variants: other }]
+                }
+                return [...prev]
+            }
+        })
+    }
+
+    const handleChecked = (label: string, value: string) => {
+        const idx = _.findIndex(variantState, { label: label })
+        if (idx === -1) {
+            return false
+        } else {
+            if (_.findIndex(variantState[idx].variants, (item) => item === value) === -1) {
+                return false
+            } else {
+                return true
+            }
+        }
+
+    }
 
     const [personName, setPersonName] = useState<string[]>([]);
-    // const [internal, setInternal] = useState<string[]>([]);
-    // const [color, setColor] = useState<string[]>([]);
-    // const [capacity, setCapacity] = useState<string[]>([]);
-    // const [size, setSize] = useState<string[]>([]);
-    // const [ram, setRam] = useState<string[]>([]);
 
 
     const handleChangeName = (event: SelectChangeEvent<typeof personName>) => {
@@ -108,7 +220,7 @@ const Categories = (props: IProps) => {
         );
     };
     return (
-        <Container sx={{ mt: 2 }}>
+        <Container sx={{ mt: 2, minHeight: `calc(100vh - ${theme.spacing(21)})` }}>
             <Breadcrumbs separator="›" aria-label="breadcrumb">
                 <Link href="/" style={{ textDecoration: 'unset', color: 'unset' }}>
                     Home
@@ -123,21 +235,28 @@ const Categories = (props: IProps) => {
                                 <Box key={variant.label} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'self-start' }}>
                                     <Typography sx={{ fontWeight: 500, fontSize: 18 }}>{variant.label}</Typography>
                                     <Box sx={{ display: 'flex', width: '100%', flexDirection: 'column' }} >
-                                        <FormControlLabel control={<Checkbox sx={{
-                                            '&.Mui-checked': {
-                                                color: '#7F00FF',
-                                            },
-                                        }} defaultChecked />} label='All' />
-
                                         <Grid sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                                            <FormControlLabel
+                                                onClick={() => {
+                                                    handleVariants(variant.label, '')
+                                                }}
+                                                sx={{ flex: '1 40%' }} control={<Checkbox sx={{
+                                                    '&.Mui-checked': {
+                                                        color: '#7F00FF',
+                                                    },
+                                                }} checked={_.findIndex(variantState, { label: variant.label }) === -1 ? true : false} />} label='All' />
                                             {variant.variants.map((value, idx) => {
                                                 return (
-                                                    <FormControlLabel sx={{ flex: '1 40%' }} key={idx} control={<Checkbox sx={{
-                                                        '&.Mui-checked': {
-                                                            color: '#7F00FF',
-                                                        },
-                                                    }} />} label={value.charAt(0).match(/\d/) ?
-                                                        value : capitalizeFirstLetter(value)} />
+                                                    <FormControlLabel
+                                                        onClick={() => {
+                                                            handleVariants(variant.label, value)
+                                                        }}
+                                                        sx={{ flex: '1 40%' }} key={idx} control={<Checkbox sx={{
+                                                            '&.Mui-checked': {
+                                                                color: '#7F00FF',
+                                                            },
+                                                        }} checked={handleChecked(variant.label, value)} />} label={value.charAt(0).match(/\d/) ?
+                                                            value : capitalizeFirstLetter(value)} />
                                                 )
                                             })}
                                         </Grid>
@@ -153,7 +272,7 @@ const Categories = (props: IProps) => {
                                 {sortArray.map((item) => {
                                     return (
                                         <ThemeProvider key={item.id} theme={theme}>
-                                            <Button onClick={() => { handleView(item.label, item.value) }} variant={priority === item.label ? 'contained' : 'outlined'} sx={{ textTransform: 'capitalize' }} color="violet" >
+                                            <Button onClick={() => { handleView(item.value) }} variant={priority === item.label ? 'contained' : 'outlined'} sx={{ textTransform: 'capitalize' }} color="violet" >
                                                 {item.label}
                                             </Button>
                                         </ThemeProvider>
