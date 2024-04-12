@@ -24,13 +24,16 @@ import { externalApi } from '@/utils/api';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
 interface ChipData {
     key: string;
     label: string;
     value: string;
 }
-
-
 
 interface IProps {
     idCate: string,
@@ -67,13 +70,12 @@ const Categories = (props: IProps) => {
         let timer = setTimeout(() => {
             if (variantState && sort) {
                 if (variantState.length > 0 && sort) {
-                    handleFilter()
                     let orQuery = ''
                     _.forEach(variantState, (item, idx: number) => {
                         orQuery += `${item.label.toLowerCase()}=${item.variants.join(',')}`
                         orQuery += variantState.length - idx - 1 === 0 ? '' : '&'
                     })
-                    setPriority(_.find(sortArray, { 'value': sort })?.label ?? 'Best selling')
+                    setPriority(_.find(sortArray, { 'slug': sort })?.label ?? 'Best selling')
                     const temp = _.map(variantState, (item) => {
                         return _.map(item.variants, (value) => {
                             return {
@@ -84,10 +86,11 @@ const Categories = (props: IProps) => {
                         })
                     }) ?? []
                     setChipData(temp)
+                    handleFilter()
                     router.push(pathname + '?' + orQuery + '&sort=' + sort)
                 } else {
+                    setPriority(_.find(sortArray, { 'slug': sort })?.label ?? 'Best selling')
                     handleSortData()
-                    setPriority(_.find(sortArray, { 'value': sort })?.label ?? 'Best selling')
                     router.push(pathname + `?sort=${sort}`)
                 }
             } else {
@@ -148,7 +151,7 @@ const Categories = (props: IProps) => {
             })
         })
         const queryString = JSON.stringify({ "$or": orQuery });
-        const sortOrder = !sort ? "-sold" : sort
+        const sortOrder = !sort ? "-sold" : _.find(sortArray, { slug: sort })?.value
         const filterQuery = orQuery.length > 0 ? `&filter=${queryString}` : ''
         if (filterQuery === '') {
             setProductsState(products ?? [])
@@ -164,8 +167,9 @@ const Categories = (props: IProps) => {
         }
     }
     const handleSortData = async () => {
+        const sortOrder = !sort ? "-sold" : _.find(sortArray, { slug: sort })?.value
         const response = await externalApi
-            .url(`/products?category=${idCate}&current=1&pageSize=100&sort=${sort}`)
+            .url(`/products?category=${idCate}&current=1&pageSize=100&sort=${sortOrder}`)
             .get()
             .json<IBackendResponse<IPagination<IProducts[]>>>()
         if (response.data) {
@@ -173,7 +177,7 @@ const Categories = (props: IProps) => {
         }
     }
     const handleView = (value: string) => {
-        setSort(value)
+        setSort(_.find(sortArray, { value })?.slug ?? 'best-selling')
     }
 
     const handleChange = (event: SelectChangeEvent) => {
@@ -240,6 +244,31 @@ const Categories = (props: IProps) => {
                     <Typography color="text.primary">{category?.title ?? 'Product'}</Typography>
                 </Breadcrumbs>
 
+                <Box sx={{ display: { md: 'none', xs: 'flex' }, gap: 1, mt: 1 }}>
+                    <ThemeProvider theme={theme}>
+                        <FormControl
+                            sx={{ width: '50%' }}>
+                            <InputLabel sx={{ left: '-7%', top: '10%', '&.Mui-focused': { color: '#7F00FF' } }}>Arrange</InputLabel>
+                            <Select
+                                value={age}
+                                label="Age"
+                                onChange={handleChange}
+                                size='small'
+                                variant='standard'
+                                color='violet'
+                            >
+
+                                <MenuItem value={10}>Ten</MenuItem>
+                                <MenuItem value={20}>Twenty</MenuItem>
+                                <MenuItem value={30}>Thirty</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </ThemeProvider>
+                    <ThemeProvider theme={theme}>
+                        <Button endIcon={<FilterAltIcon />} sx={{ width: '50%', textTransform: 'capitalize' }} size='small' color='violet' variant="outlined">Features</Button>
+                    </ThemeProvider>
+                </Box>
+
                 <Stack sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }} direction="row">
                     {chipData.length > 0 && <Typography sx={{ fontWeight: 500, fontSize: '16px' }}>Filter by</Typography>}
                     {chipData.length > 0 && _.map(chipData, item => {
@@ -266,7 +295,7 @@ const Categories = (props: IProps) => {
                     </ThemeProvider>}
                 </Stack>
             </Box>
-            <Box sx={{ mt: 2 }}>
+            <Box sx={{ mt: 2, display: { md: 'block', xs: 'none' } }}>
                 <Box sx={{ flexGrow: 1, mt: 2, display: 'flex' }}>
                     <Box sx={{ width: '23%' }}>
                         {variants.map(variant => {

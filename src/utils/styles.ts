@@ -25,6 +25,12 @@ declare module '@mui/material/Chip' {
         violet: true;
     }
 }
+declare module '@mui/material/InputBase' {
+    interface InputBasePropsColorOverrides {
+        violet: true;
+    }
+}
+
 
 const violetBase = '#7F00FF';
 const violetMain = alpha(violetBase, 0.7);
