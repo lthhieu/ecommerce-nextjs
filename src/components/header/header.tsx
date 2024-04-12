@@ -227,7 +227,7 @@ function Header(props: Props) {
                                 <SearchIcon />
                             </SearchIconWrapper>
                             <StyledInputBase
-                                placeholder="Search…"
+                                placeholder="Search something baby ..."
                                 inputProps={{ 'aria-label': 'search' }}
                             />
                         </Search>

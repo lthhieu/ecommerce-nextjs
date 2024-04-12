@@ -21,6 +21,15 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation'
 import _ from 'lodash';
 import { externalApi } from '@/utils/api';
+import Chip from '@mui/material/Chip';
+import Stack from '@mui/material/Stack';
+import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
+interface ChipData {
+    key: string;
+    label: string;
+    value: string;
+}
+
 
 
 interface IProps {
@@ -29,28 +38,6 @@ interface IProps {
     category: ICategories | null,
     variants: IVariants[]
 }
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
-const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-];
 const Categories = (props: IProps) => {
     const { products, category, variants, idCate } = props;
     const [age, setAge] = useState('');
@@ -62,10 +49,11 @@ const Categories = (props: IProps) => {
     const pathname = usePathname()
     const sorting = searchParams.get('sort')
     const [sort, setSort] = useState(sorting)
+    const [chipData, setChipData] = useState<any>([]);
+
 
     useEffect(() => {
         const url = `${pathname}?${searchParams}`
-        // console.log(url.split('?')[1].replaceAll('%2C', ',').replaceAll('+', ' '))
         if (url.split('?')[1] !== '') {
             let params = _.reject(parseQueryString(url.split('?')[1].replaceAll('%2C', ',').replaceAll('+', ' ')), { label: 'Sort' })
             if (!_.isEmpty(params)) {
@@ -86,6 +74,16 @@ const Categories = (props: IProps) => {
                         orQuery += variantState.length - idx - 1 === 0 ? '' : '&'
                     })
                     setPriority(_.find(sortArray, { 'value': sort })?.label ?? 'Best selling')
+                    const temp = _.map(variantState, (item) => {
+                        return _.map(item.variants, (value) => {
+                            return {
+                                key: `${item.label}-${value}`,
+                                label: item.label,
+                                value: value
+                            }
+                        })
+                    }) ?? []
+                    setChipData(temp)
                     router.push(pathname + '?' + orQuery + '&sort=' + sort)
                 } else {
                     handleSortData()
@@ -102,7 +100,21 @@ const Categories = (props: IProps) => {
                     })
 
                     const filterQuery = orQuery !== '' ? `?${orQuery}` : ''
+                    const temp = _.map(variantState, (item) => {
+                        return _.map(item.variants, (value) => {
+                            return {
+                                key: `${item.label}-${value}`,
+                                label: item.label,
+                                value: value
+                            }
+                        })
+                    }) ?? []
+                    setChipData(temp as any)
                     router.push(pathname + filterQuery)
+                } else {
+                    handleFilter()
+                    router.push(pathname)
+                    setChipData([])
                 }
                 setPriority('Best selling')
             }
@@ -176,20 +188,20 @@ const Categories = (props: IProps) => {
             const isExistedLabel = _.findIndex(variantState, { label: label })
             if (isExistedLabel === -1) {
                 return [...prev, { label: label, variants: [value] }]
-            } else {
-                let temp = variantState[isExistedLabel]
-                if (temp.variants.includes(value)) {
-                    _.pull(temp.variants, value)
-                    if (_.isEmpty(temp.variants)) {
-                        _.pull(variantState, temp)
-                    }
-                } else {
-                    const other = _.concat(temp.variants, value)
-                    _.pull(variantState, temp)
-                    return [...prev, { label: label, variants: other }]
-                }
-                return [...prev]
             }
+            let temp = variantState[isExistedLabel]
+            if (temp.variants.includes(value)) {
+                _.pull(temp.variants, value)
+                if (_.isEmpty(temp.variants)) {
+                    _.pull(variantState, temp)
+                }
+            } else {
+                const other = _.concat(temp.variants, value)
+                _.pull(variantState, temp)
+                return [...prev, { label: label, variants: other }]
+            }
+            return [...prev]
+
         })
     }
 
@@ -207,26 +219,53 @@ const Categories = (props: IProps) => {
 
     }
 
-    const [personName, setPersonName] = useState<string[]>([]);
-
-
-    const handleChangeName = (event: SelectChangeEvent<typeof personName>) => {
-        const {
-            target: { value },
-        } = event;
-        setPersonName(
-            // On autofill we get a stringified value.
-            typeof value === 'string' ? value.split(',') : value
-        );
-    };
+    const ChipLabel = ({ label, value }: { label: string, value: string }) => {
+        if (value === '') {
+            return (
+                <Typography sx={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: .5 }}>{capitalizeFirstLetter(`${label}`)} <CancelRoundedIcon fontSize='small' /></Typography>
+            )
+        }
+        return (
+            <Typography sx={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: .5 }}>{capitalizeFirstLetter(`${label}-${value.charAt(0).match(/\d/) ?
+                value : capitalizeFirstLetter(value)}`)} <CancelRoundedIcon fontSize='small' /></Typography>
+        )
+    }
     return (
         <Container sx={{ mt: 2, minHeight: `calc(100vh - ${theme.spacing(21)})` }}>
-            <Breadcrumbs separator="›" aria-label="breadcrumb">
-                <Link href="/" style={{ textDecoration: 'unset', color: 'unset' }}>
-                    Home
-                </Link>
-                <Typography color="text.primary">{category?.title ?? 'Product'}</Typography>
-            </Breadcrumbs>
+            <Box sx={{ display: 'flex', flexDirection: { md: 'row', xs: 'column' }, gap: { md: 0, xs: 1 } }}>
+                <Breadcrumbs sx={{ width: { md: '23%', xs: '100%' } }} separator="›" aria-label="breadcrumb">
+                    <Link href="/" style={{ textDecoration: 'unset', color: 'unset' }}>
+                        Home
+                    </Link>
+                    <Typography color="text.primary">{category?.title ?? 'Product'}</Typography>
+                </Breadcrumbs>
+
+                <Stack sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }} direction="row">
+                    {chipData.length > 0 && <Typography sx={{ fontWeight: 500, fontSize: '16px' }}>Filter by</Typography>}
+                    {chipData.length > 0 && _.map(chipData, item => {
+                        return _.map(item, (data: ChipData) => {
+                            return (
+                                <ThemeProvider key={data.key} theme={theme}>
+                                    <Chip
+                                        onClick={() => handleVariants(data.label, data.value)}
+                                        variant="outlined"
+                                        color='violet'
+                                        label={<ChipLabel label={data.label} value={data.value} />}
+                                    />
+                                </ThemeProvider>
+                            )
+                        })
+                    })}
+                    {chipData.length > 1 && <ThemeProvider theme={theme}>
+                        <Chip
+                            onClick={() => setVariantState([])}
+                            variant="outlined"
+                            color='violet'
+                            label={<ChipLabel label={'Delete all'} value={''} />}
+                        />
+                    </ThemeProvider>}
+                </Stack>
+            </Box>
             <Box sx={{ mt: 2 }}>
                 <Box sx={{ flexGrow: 1, mt: 2, display: 'flex' }}>
                     <Box sx={{ width: '23%' }}>

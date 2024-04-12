@@ -20,6 +20,11 @@ declare module '@mui/material/Button' {
         violet: true;
     }
 }
+declare module '@mui/material/Chip' {
+    interface ChipPropsColorOverrides {
+        violet: true;
+    }
+}
 
 const violetBase = '#7F00FF';
 const violetMain = alpha(violetBase, 0.7);
