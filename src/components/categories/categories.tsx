@@ -29,6 +29,50 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import Drawer from '@mui/material/Drawer';
+import CloseIcon from '@mui/icons-material/Close';
+import { styled } from '@mui/material/styles';
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
+import MuiAccordionSummary, {
+    AccordionSummaryProps,
+} from '@mui/material/AccordionSummary';
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
+
+
+const Accordion = styled((props: AccordionProps) => (
+    <MuiAccordion disableGutters elevation={0} square {...props} />
+))(({ theme }) => ({
+    border: `1px solid ${theme.palette.divider}`,
+    '&:not(:last-child)': {
+        borderBottom: 0,
+    },
+    '&::before': {
+        display: 'none',
+    },
+}));
+const AccordionSummary = styled((props: AccordionSummaryProps) => (
+    <MuiAccordionSummary
+        expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
+        {...props}
+    />
+))(({ theme }) => ({
+    backgroundColor:
+        theme.palette.mode === 'dark'
+            ? 'rgba(255, 255, 255, .05)'
+            : 'rgba(0, 0, 0, .03)',
+    flexDirection: 'row-reverse',
+    '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
+        transform: 'rotate(90deg)',
+    },
+    '& .MuiAccordionSummary-content': {
+        marginLeft: theme.spacing(1),
+    },
+}));
+const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+    padding: theme.spacing(2),
+    borderTop: '1px solid rgba(0, 0, 0, .125)',
+}));
 interface ChipData {
     key: string;
     label: string;
@@ -43,16 +87,28 @@ interface IProps {
 }
 const Categories = (props: IProps) => {
     const { products, category, variants, idCate } = props;
-    const [age, setAge] = useState('');
     const [priority, setPriority] = useState('');
     const [productsState, setProductsState] = useState<IProducts[]>([])
     const [variantState, setVariantState] = useState<IVariants[]>([])
+    const [variantMobile, setVariantMobile] = useState<IVariants[]>(variantState)
     const router = useRouter()
     const searchParams = useSearchParams()
     const pathname = usePathname()
     const sorting = searchParams.get('sort')
     const [sort, setSort] = useState(sorting)
     const [chipData, setChipData] = useState<any>([]);
+    const [open, setOpen] = useState(false);
+    const [expanded, setExpanded] = useState<string | false>(variants[0].label);
+
+    const handleChangeAcc =
+        (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+            setExpanded(newExpanded ? panel : false);
+        };
+
+    const toggleDrawer = (newOpen: boolean) => () => {
+        console.log('here')
+        setOpen(newOpen);
+    };
 
 
     useEffect(() => {
@@ -61,6 +117,7 @@ const Categories = (props: IProps) => {
             let params = _.reject(parseQueryString(url.split('?')[1].replaceAll('%2C', ',').replaceAll('+', ' ')), { label: 'Sort' })
             if (!_.isEmpty(params)) {
                 setVariantState(params)
+                setVariantMobile(params)
             }
         } else {
             setProductsState(products ?? [])
@@ -86,11 +143,13 @@ const Categories = (props: IProps) => {
                         })
                     }) ?? []
                     setChipData(temp)
+                    setVariantMobile(variantState)
                     handleFilter()
                     router.push(pathname + '?' + orQuery + '&sort=' + sort)
                 } else {
                     setPriority(_.find(sortArray, { 'slug': sort })?.label ?? 'Best selling')
                     handleSortData()
+                    setChipData([])
                     router.push(pathname + `?sort=${sort}`)
                 }
             } else {
@@ -113,6 +172,7 @@ const Categories = (props: IProps) => {
                         })
                     }) ?? []
                     setChipData(temp as any)
+                    setVariantMobile(variantState)
                     router.push(pathname + filterQuery)
                 } else {
                     handleFilter()
@@ -181,7 +241,7 @@ const Categories = (props: IProps) => {
     }
 
     const handleChange = (event: SelectChangeEvent) => {
-        setAge(event.target.value);
+        handleView(event.target.value);
     };
     const handleVariants = (label: string, value: string) => {
         setVariantState((prev: any) => {
@@ -209,6 +269,32 @@ const Categories = (props: IProps) => {
         })
     }
 
+    const handleVariantMobile = (label: string, value: string) => {
+        setVariantMobile((prev: any) => {
+            if (value === '') {
+                _.remove(variantMobile, { label: label })
+                return [...prev]
+            }
+            const isExistedLabel = _.findIndex(variantMobile, { label: label })
+            if (isExistedLabel === -1) {
+                return [...prev, { label: label, variants: [value] }]
+            }
+            let temp = variantMobile[isExistedLabel]
+            if (temp.variants.includes(value)) {
+                _.pull(temp.variants, value)
+                if (_.isEmpty(temp.variants)) {
+                    _.pull(variantMobile, temp)
+                }
+            } else {
+                const other = _.concat(temp.variants, value)
+                _.pull(variantMobile, temp)
+                return [...prev, { label: label, variants: other }]
+            }
+            return [...prev]
+
+        })
+    }
+
     const handleChecked = (label: string, value: string) => {
         const idx = _.findIndex(variantState, { label: label })
         if (idx === -1) {
@@ -220,6 +306,27 @@ const Categories = (props: IProps) => {
                 return true
             }
         }
+    }
+
+    const handleCheckedMobile = (label: string, value: string) => {
+        const idx = _.findIndex(variantMobile, { label: label })
+        if (idx === -1) {
+            return false
+        } else {
+            if (_.findIndex(variantMobile[idx].variants, (item) => item === value) === -1) {
+                return false
+            } else {
+                return true
+            }
+        }
+
+    }
+
+    const assignMobileToVariants = (sign?: string) => {
+        if (sign === 'reset') {
+            setVariantMobile([])
+        }
+        setVariantState(variantMobile)
 
     }
 
@@ -234,8 +341,75 @@ const Categories = (props: IProps) => {
                 value : capitalizeFirstLetter(value)}`)} <CancelRoundedIcon fontSize='small' /></Typography>
         )
     }
+    const DrawerList = (
+        <Box sx={{ width: 250 }} role="presentation">
+            <Box position='static' sx={{ top: 100, width: 250, bgcolor: '#7F00FF', py: 1 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', px: 2 }}>
+                    <Typography sx={{
+                        fontFamily: 'monospace',
+                        fontWeight: 700,
+                        letterSpacing: '.3rem',
+                        color: 'white',
+                    }}>LOGO</Typography>
+                    <CloseIcon onClick={toggleDrawer(false)} sx={{ color: 'white' }} />
+                </Box>
+            </Box>
+            <div>
+                {variants.map((variant, idx: number) => {
+                    return (
+                        <Accordion key={idx} expanded={expanded === variant.label} onChange={handleChangeAcc(variant.label)}>
+                            <AccordionSummary aria-controls={`${variant.label}-content`} id={`${variant.label}-header`}>
+                                <Typography>{variant.label}</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Box sx={{ display: 'flex', width: '100%', flexDirection: 'column' }} >
+                                    <Grid sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                                        <FormControlLabel
+                                            onClick={() => {
+                                                handleVariantMobile(variant.label, '')
+                                            }}
+                                            sx={{ flex: '1 40%' }} control={<Checkbox sx={{
+                                                '&.Mui-checked': {
+                                                    color: '#7F00FF',
+                                                },
+                                            }} checked={_.findIndex(variantMobile, { label: variant.label }) === -1 ? true : false} />} label='All' />
+                                        {variant.variants.map((value, idx) => {
+                                            return (
+                                                <FormControlLabel
+                                                    onClick={() => {
+                                                        handleVariantMobile(variant.label, value)
+                                                    }}
+                                                    sx={{ flex: '1 40%' }} key={idx} control={<Checkbox sx={{
+                                                        '&.Mui-checked': {
+                                                            color: '#7F00FF',
+                                                        },
+                                                    }} checked={handleCheckedMobile(variant.label, value)} />} label={value.charAt(0).match(/\d/) ?
+                                                        value : capitalizeFirstLetter(value)} />
+                                            )
+                                        })}
+                                    </Grid>
+                                </Box>
+                            </AccordionDetails>
+                        </Accordion>
+                    )
+                })}
+            </div>
+            <Box position='fixed' sx={{ top: 'auto', bottom: '1%', width: 250, }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', px: 2 }}>
+                    <Button
+                        onClick={() => { assignMobileToVariants('reset') }}
+                        sx={{ width: '48%', bgcolor: '#4c5c6c', textTransform: 'capitalize' }} variant='contained'>Reset</Button>
+                    <ThemeProvider theme={theme}>
+                        <Button
+                            onClick={() => { assignMobileToVariants(); setOpen(false); }}
+                            sx={{ width: '48%', textTransform: 'capitalize' }} variant='contained' color='violet'>Apply</Button>
+                    </ThemeProvider>
+                </Box>
+            </Box>
+        </Box>
+    );
     return (
-        <Container sx={{ mt: 2, minHeight: `calc(100vh - ${theme.spacing(21)})` }}>
+        <Container sx={{ mt: 2, minHeight: { md: `calc(100vh - ${theme.spacing(21)})`, xs: `calc(100vh - ${theme.spacing(18)})` } }}>
             <Box sx={{ display: 'flex', flexDirection: { md: 'row', xs: 'column' }, gap: { md: 0, xs: 1 } }}>
                 <Breadcrumbs sx={{ width: { md: '23%', xs: '100%' } }} separator="›" aria-label="breadcrumb">
                     <Link href="/" style={{ textDecoration: 'unset', color: 'unset' }}>
@@ -248,35 +422,39 @@ const Categories = (props: IProps) => {
                     <ThemeProvider theme={theme}>
                         <FormControl
                             sx={{ width: '50%' }}>
-                            <InputLabel sx={{ left: '-7%', top: '10%', '&.Mui-focused': { color: '#7F00FF' } }}>Arrange</InputLabel>
+                            <InputLabel sx={{ left: '-7%', '&.Mui-focused': { color: '#7F00FF' } }}>Arrange</InputLabel>
                             <Select
-                                value={age}
+                                value={_.find(sortArray, { 'slug': sort ?? 'best-selling' })?.value}
                                 label="Age"
                                 onChange={handleChange}
                                 size='small'
                                 variant='standard'
                                 color='violet'
                             >
-
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
+                                {sortArray.map((item, idx) => {
+                                    return (
+                                        <MenuItem key={idx} value={item.value}>{item.label}</MenuItem>
+                                    )
+                                })}
                             </Select>
                         </FormControl>
                     </ThemeProvider>
                     <ThemeProvider theme={theme}>
-                        <Button endIcon={<FilterAltIcon />} sx={{ width: '50%', textTransform: 'capitalize' }} size='small' color='violet' variant="outlined">Features</Button>
+                        <Button onClick={toggleDrawer(true)} endIcon={<FilterAltIcon />} sx={{ width: '50%', textTransform: 'capitalize' }} size='small' color='violet' variant="outlined">Features</Button>
                     </ThemeProvider>
+                    <Drawer anchor='right' open={open} onClose={toggleDrawer(false)}>
+                        {DrawerList}
+                    </Drawer>
                 </Box>
 
-                <Stack sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }} direction="row">
+                <Stack sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1, mt: { md: 0, xs: 1 } }} direction="row">
                     {chipData.length > 0 && <Typography sx={{ fontWeight: 500, fontSize: '16px' }}>Filter by</Typography>}
                     {chipData.length > 0 && _.map(chipData, item => {
                         return _.map(item, (data: ChipData) => {
                             return (
                                 <ThemeProvider key={data.key} theme={theme}>
                                     <Chip
-                                        onClick={() => handleVariants(data.label, data.value)}
+                                        onClick={() => { handleVariants(data.label, data.value) }}
                                         variant="outlined"
                                         color='violet'
                                         label={<ChipLabel label={data.label} value={data.value} />}
@@ -285,9 +463,9 @@ const Categories = (props: IProps) => {
                             )
                         })
                     })}
-                    {chipData.length > 1 && <ThemeProvider theme={theme}>
+                    {chipData.length > 0 && <ThemeProvider theme={theme}>
                         <Chip
-                            onClick={() => setVariantState([])}
+                            onClick={() => { setVariantState([]); setVariantMobile([]) }}
                             variant="outlined"
                             color='violet'
                             label={<ChipLabel label={'Delete all'} value={''} />}
@@ -295,9 +473,9 @@ const Categories = (props: IProps) => {
                     </ThemeProvider>}
                 </Stack>
             </Box>
-            <Box sx={{ mt: 2, display: { md: 'block', xs: 'none' } }}>
+            <Box sx={{ mt: 2 }}>
                 <Box sx={{ flexGrow: 1, mt: 2, display: 'flex' }}>
-                    <Box sx={{ width: '23%' }}>
+                    <Box sx={{ width: '23%', display: { md: 'block', xs: 'none' } }}>
                         {variants.map(variant => {
                             return (
                                 <Box key={variant.label} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'self-start' }}>
@@ -333,10 +511,10 @@ const Categories = (props: IProps) => {
                             )
                         })}
                     </Box>
-                    <Box sx={{ width: '77%' }}>
-                        <Box sx={{ mb: 2, display: 'flex', gap: 2 }}>
+                    <Box sx={{ width: { md: '77%', xs: '100%' } }}>
+                        <Box sx={{ mb: 2, display: { md: 'flex', xs: 'none' }, gap: 2 }}>
                             <Typography sx={{ py: 1, fontWeight: 500, fontSize: '16px' }}>Viewing priority</Typography>
-                            <ButtonGroup variant="outlined" aria-label="Basic button group">
+                            <ButtonGroup variant="outlined">
                                 {sortArray.map((item) => {
                                     return (
                                         <ThemeProvider key={item.id} theme={theme}>
@@ -351,12 +529,17 @@ const Categories = (props: IProps) => {
                         <Grid container spacing={2}>
                             {productsState && productsState.length > 0 && productsState.map((item) => {
                                 return (
-                                    <Grid key={item._id} md={4} xs={12} sm={6}>
+                                    <Grid key={item._id} md={4} xs={6}>
                                         <Item sx={{ textAlign: 'start' }}>
                                             <Link style={{ textDecoration: 'unset', color: 'unset' }} href={`/collections/${item.category.title.toLowerCase()}/products/${item.slug}_${item._id}.html`}>
                                                 <Box sx={{ display: 'flex', flexDirection: 'column', }}>
-                                                    <Box sx={{ marginTop: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                        <Image src={item.thumb} alt="image" width={250} height={250} style={{ objectFit: 'contain' }} />
+                                                    <Box sx={{ display: { md: 'none', xs: 'flex' }, marginTop: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                                        <Image src={item.thumb} alt="image" width={150} height={150}
+                                                            style={{ objectFit: 'contain' }} />
+                                                    </Box>
+                                                    <Box sx={{ display: { xs: 'none', md: 'flex' }, marginTop: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                                        <Image src={item.thumb} alt="image" width={250} height={250}
+                                                            style={{ objectFit: 'contain' }} />
                                                     </Box>
                                                     <Box sx={{ paddingX: 4, paddingBottom: 2, width: 1 }}>
                                                         <Typography sx={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} fontWeight={500} fontSize={17}>{item.title}</Typography>

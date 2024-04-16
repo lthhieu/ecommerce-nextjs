@@ -4,7 +4,7 @@ import SectionOne from "@/components/home/section.one";
 import SectionTwo from "@/components/home/section.two";
 import { externalApi } from "@/utils/api";
 import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "../api/auth/auth";
 
 export default async function Home() {
   const session = await getServerSession(authOptions)
