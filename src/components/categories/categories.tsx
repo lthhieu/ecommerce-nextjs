@@ -534,7 +534,7 @@ const Categories = (props: IProps) => {
                                             <Link style={{ textDecoration: 'unset', color: 'unset' }} href={`/collections/${item.category.title.toLowerCase()}/products/${item.slug}_${item._id}.html`}>
                                                 <Box sx={{ display: 'flex', flexDirection: 'column', }}>
                                                     <Box sx={{ display: { md: 'none', xs: 'flex' }, marginTop: 1, alignItems: 'center', justifyContent: 'center' }}>
-                                                        <Image src={item.thumb} alt="image" width={150} height={150}
+                                                        <Image priority={true} src={item.thumb} alt="image" width={150} height={150}
                                                             style={{ objectFit: 'contain' }} />
                                                     </Box>
                                                     <Box sx={{ display: { xs: 'none', md: 'flex' }, marginTop: 1, alignItems: 'center', justifyContent: 'center' }}>

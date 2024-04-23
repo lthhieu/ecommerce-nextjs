@@ -10,7 +10,7 @@ const PeopleAlsoBuy = (props: IProps) => {
     const { productsByCategory } = props;
     return (
         <Box>
-            <Typography sx={{ py: 1, textTransform: 'uppercase', fontWeight: 500, fontSize: '16px' }}>people also buy</Typography>
+            <Typography sx={{ py: 1, fontWeight: 500, fontSize: '18px', letterSpacing: '.1rem', }}>People also buy</Typography>
             <Divider color="#7F00FF" sx={{ height: 2 }} />
             <Box sx={{ flexGrow: 1, mt: 0 }}>
                 <CustomSlider data={productsByCategory ?? []} />

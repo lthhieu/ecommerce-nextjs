@@ -27,6 +27,7 @@ import Tab from '@mui/material/Tab';
 import { CustomTabPanel } from "../home/section.two";
 import PeopleAlsoBuy from "./people.also.buy";
 import CustomImageGallery from "./custom.image.gallery";
+import RatingComponent from "./rating";
 
 interface IProps {
     data: null | IProducts,
@@ -165,6 +166,7 @@ const DetailProducts = (props: IProps) => {
                     {<Box dangerouslySetInnerHTML={{ __html: data?.information.delivery || '' }}></Box>}
                 </CustomTabPanel>
             </Box>
+            <RatingComponent totalRating={data?.totalRating ?? 0} />
             <PeopleAlsoBuy productsByCategory={productsByCategory} />
         </Container>
     )
