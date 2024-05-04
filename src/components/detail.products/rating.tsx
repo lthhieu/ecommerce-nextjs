@@ -9,6 +9,16 @@ import Typography from "@mui/material/Typography"
 import { ThemeProvider, styled } from '@mui/material/styles';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import _ from "lodash"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import Switch from '@mui/material/Switch';
+import Paper from '@mui/material/Paper';
+import Collapse from '@mui/material/Collapse';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/app/api/auth/auth"
+import { useSession } from "next-auth/react"
+import StarIcon from '@mui/icons-material/Star';
+
 
 interface IProps {
     totalRating: number
@@ -39,8 +49,109 @@ const ProgressComponent = ({ idx, value, total }: { idx: number, value: number, 
     )
 }
 
+
+const labels: { [index: string]: string } = {
+    0.5: 'Useless',
+    1: 'Useless+',
+    1.5: 'Poor',
+    2: 'Poor+',
+    2.5: 'Ok',
+    3: 'Ok+',
+    3.5: 'Good',
+    4: 'Good+',
+    4.5: 'Excellent',
+    5: 'Excellent+',
+};
+
+function getLabelText(value: number) {
+    return `${value} Star${value !== 1 ? 's' : ''}, ${labels[value]}`;
+}
+const HoverRating = ({ value, setValue }: { value: number | null, setValue: Dispatch<SetStateAction<number | null>> }) => {
+    const [hover, setHover] = useState(-1);
+    const [color, setColor] = useState('text.secondary')
+    useEffect(() => {
+        if (hover === -1) {
+            if (value && value >= 4) {
+                setColor('#48bb78')
+            }
+            if (value && value > 1 && value < 4) {
+                setColor('text.secondary')
+            }
+            if (value && value <= 1) {
+                setColor('#ff6d75')
+            }
+        }
+        if (hover <= 1 && hover > -1) {
+            setColor('#ff6d75')
+        }
+        if (hover >= 4) {
+            setColor('#48bb78')
+        }
+        if (hover > 1 && hover < 4) {
+            setColor('text.secondary')
+        }
+    }, [hover])
+
+    return (
+        <Box
+            sx={{
+                width: 200,
+                display: 'flex',
+                alignItems: 'center',
+            }}
+        >
+            <Rating
+                name="hover-feedback"
+                value={value}
+                precision={0.5}
+                getLabelText={getLabelText}
+                onChange={(event, newValue) => {
+                    setValue(newValue);
+                }}
+                onChangeActive={(event, newHover) => {
+                    setHover(newHover);
+                }}
+                emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
+            />
+            {value !== null && (
+                <Box sx={{ ml: 2, color: color }}>{labels[hover !== -1 ? hover : value]}</Box>
+            )}
+        </Box>
+    );
+}
+
+const icon = () => {
+    const [valueRating, setValueRating] = useState<number | null>(2)
+    return (
+        <Box sx={{ height: 100, border: '1px solid', display: 'flex' }}>
+            <Box sx={{ width: '40%', display: 'flex', flexDirection: 'column', gap: .5, alignItems: 'center', justifyContent: 'center' }}>
+                <Typography>How many stars would you rate this product?</Typography>
+                <HoverRating value={valueRating} setValue={setValueRating} />
+            </Box>
+            <Box sx={{ width: '60%' }}>
+                <Button onClick={() => { alert(valueRating) }} variant="contained">submit</Button>
+            </Box>
+        </Box>
+    )
+
+};
+
 const RatingComponent = (props: IProps) => {
     const { totalRating } = props
+    const { data: session } = useSession()
+    const handleClick = () => {
+        if (session?.user) {
+            setChecked((prev) => !prev);
+        }
+        else {
+            alert('dang nhap di ban tre =))')
+        }
+    }
+    const [checked, setChecked] = useState(false);
+
+    const handleChange = () => {
+
+    };
     return (
         <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -65,9 +176,17 @@ const RatingComponent = (props: IProps) => {
                 <Box sx={{ textAlign: 'center', width: '20%' }}>
                     <Typography>Have you use this product?</Typography>
                     <ThemeProvider theme={theme}>
-                        <Button variant="contained" color="violet" sx={{ mt: 1 }}>Send review</Button>
+                        <Button onClick={() => { handleClick() }} variant="contained" color="violet" sx={{ mt: 1 }}>{checked ? 'Close review' : 'Send review'}</Button>
                     </ThemeProvider>
                 </Box>
+
+            </Box>
+            <Box sx={{ width: '100%', mt: 2 }} >
+                <div>
+                    <Collapse in={checked}>
+                        <>{icon()}</>
+                    </Collapse>
+                </div>
             </Box>
         </Box>
     )
