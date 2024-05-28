@@ -1,6 +1,6 @@
 'use client'
 
-import { theme } from "@/utils/styles"
+import { CssTextField, theme } from "@/utils/styles"
 import Button from "@mui/material/Button"
 import Rating from "@mui/material/Rating"
 import Box from "@mui/material/Box"
@@ -10,7 +10,6 @@ import { ThemeProvider, styled } from '@mui/material/styles';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import _ from "lodash"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import Switch from '@mui/material/Switch';
 import Paper from '@mui/material/Paper';
 import Collapse from '@mui/material/Collapse';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -18,10 +17,15 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/auth"
 import { useSession } from "next-auth/react"
 import StarIcon from '@mui/icons-material/Star';
-
+import TextField from '@mui/material/TextField';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { externalApi } from "@/utils/api"
 
 interface IProps {
-    totalRating: number
+    totalRating: number,
+    idProduct: string
 }
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
@@ -120,24 +124,92 @@ const HoverRating = ({ value, setValue }: { value: number | null, setValue: Disp
     );
 }
 
-const icon = () => {
+const icon = (idProduct: string) => {
     const [valueRating, setValueRating] = useState<number | null>(2)
     return (
-        <Box sx={{ height: 100, border: '1px solid', display: 'flex' }}>
-            <Box sx={{ width: '40%', display: 'flex', flexDirection: 'column', gap: .5, alignItems: 'center', justifyContent: 'center' }}>
+        <Paper sx={{ py: 2 }}>
+            <Formik
+                initialValues={{ comment: '' }}
+                validationSchema={Yup.object({
+                    // stars: Yup.number().required('Required'),
+                    comment: Yup.string().required('Required').test('len', 'At least 10 characters', val => val.length >= 10),
+                })}
+                onSubmit={(values, { setSubmitting }) => {
+                    setTimeout(async () => {
+                        console.log(values.comment, valueRating, idProduct)
+                        //             const response = await externalApi
+                        // .url(`/products/rating`)
+                        // .patch()
+                        // .json<IBackendResponse<IPagination<IProducts[]>>>()
+                        // if (!response?.error) {
+                        //     router.push('/')
+                        // } else {
+                        //     toast.error(response.error ?? 'Invalid credentials')
+                        // }
+                        setSubmitting(false);
+                    }, 400);
+                }}
+            >
+                {(formik) => (
+                    <form onSubmit={formik.handleSubmit}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Box sx={{ width: '35%', display: 'flex', flexDirection: 'column', gap: .5, alignItems: 'center', justifyContent: 'center' }}>
+                                <Typography>How many stars would you rate this product?</Typography>
+                                <HoverRating value={valueRating} setValue={setValueRating} />
+                            </Box>
+                            <Box sx={{ width: '60%', display: 'flex', gap: 1, alignItems: 'center' }}>
+                                <Box sx={{
+                                    '& .MuiTextField-root': { width: '60ch' },
+                                }}>
+                                    <CssTextField
+                                        multiline
+                                        {...formik.getFieldProps('comment')}
+                                        required helperText={formik.errors.comment} error={formik.touched.comment && formik.errors.comment ? true : false} margin="normal" fullWidth label="Đánh giá đi bạn trẻ" name='comment' />
+                                </Box>
+
+                                <ThemeProvider theme={theme}>
+                                    <LoadingButton
+                                        type="submit"
+                                        loading={formik.isSubmitting}
+                                        fullWidth sx={{
+                                            my: 2,
+                                        }}
+                                        color="violet"
+                                        variant="contained"
+                                    >
+                                        <span>Vote</span>
+                                    </LoadingButton>
+                                </ThemeProvider>
+                            </Box>
+                        </Box>
+                    </form>
+                )}
+            </Formik>
+            {/* <Box sx={{ width: '40%', display: 'flex', flexDirection: 'column', gap: .5, alignItems: 'center', justifyContent: 'center' }}>
                 <Typography>How many stars would you rate this product?</Typography>
                 <HoverRating value={valueRating} setValue={setValueRating} />
             </Box>
-            <Box sx={{ width: '60%' }}>
+            <Box sx={{ width: '60%', display: 'flex', gap: 1, alignItems: 'center' }}>
+                <Box sx={{
+                    '& .MuiTextField-root': { width: '60ch' },
+                }}>         
+                    <TextField
+                        id="outlined-textarea"
+                        label="Multiline Placeholder"
+                        placeholder="Placeholder"
+                        multiline
+                    />
+                </Box>
+
                 <Button onClick={() => { alert(valueRating) }} variant="contained">submit</Button>
-            </Box>
-        </Box>
+            </Box> */}
+        </Paper>
     )
 
 };
 
 const RatingComponent = (props: IProps) => {
-    const { totalRating } = props
+    const { totalRating, idProduct } = props
     const { data: session } = useSession()
     const handleClick = () => {
         if (session?.user) {
@@ -184,7 +256,7 @@ const RatingComponent = (props: IProps) => {
             <Box sx={{ width: '100%', mt: 2 }} >
                 <div>
                     <Collapse in={checked}>
-                        <>{icon()}</>
+                        <>{icon(idProduct)}</>
                     </Collapse>
                 </div>
             </Box>

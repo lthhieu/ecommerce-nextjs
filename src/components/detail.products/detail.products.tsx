@@ -166,7 +166,7 @@ const DetailProducts = (props: IProps) => {
                     {<Box dangerouslySetInnerHTML={{ __html: data?.information.delivery || '' }}></Box>}
                 </CustomTabPanel>
             </Box>
-            <RatingComponent totalRating={data?.totalRating ?? 0} />
+            <RatingComponent totalRating={data?.totalRating ?? 0} idProduct={data?._id ?? ''} />
             <PeopleAlsoBuy productsByCategory={productsByCategory} />
         </Container>
     )
