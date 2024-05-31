@@ -124,7 +124,7 @@ const HoverRating = ({ value, setValue }: { value: number | null, setValue: Disp
     );
 }
 
-const icon = (idProduct: string) => {
+const icon = (idProduct: string, token: string) => {
     const [valueRating, setValueRating] = useState<number | null>(2)
     return (
         <Paper sx={{ py: 2 }}>
@@ -136,16 +136,14 @@ const icon = (idProduct: string) => {
                 })}
                 onSubmit={(values, { setSubmitting }) => {
                     setTimeout(async () => {
-                        console.log(values.comment, valueRating, idProduct)
-                        //             const response = await externalApi
-                        // .url(`/products/rating`)
-                        // .patch()
-                        // .json<IBackendResponse<IPagination<IProducts[]>>>()
-                        // if (!response?.error) {
-                        //     router.push('/')
-                        // } else {
-                        //     toast.error(response.error ?? 'Invalid credentials')
-                        // }
+                        // console.log(values.comment, valueRating, idProduct)
+                        const response = await externalApi
+                            .url(`/products/rating/${idProduct}`).auth(`Bearer ${token}`)
+                            .patch({
+                                star: valueRating, comment: values.comment, postedAt: Date.now()
+                            })
+                            .json<IBackendResponse<IPagination<IProducts[]>>>()
+                        console.log(response)
                         setSubmitting(false);
                     }, 400);
                 }}
@@ -256,7 +254,7 @@ const RatingComponent = (props: IProps) => {
             <Box sx={{ width: '100%', mt: 2 }} >
                 <div>
                     <Collapse in={checked}>
-                        <>{icon(idProduct)}</>
+                        <>{icon(idProduct, session?.access_token ?? '')}</>
                     </Collapse>
                 </div>
             </Box>
