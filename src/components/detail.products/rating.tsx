@@ -12,16 +12,13 @@ import _ from "lodash"
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import Paper from '@mui/material/Paper';
 import Collapse from '@mui/material/Collapse';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/auth"
 import { useSession } from "next-auth/react"
 import StarIcon from '@mui/icons-material/Star';
-import TextField from '@mui/material/TextField';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { externalApi } from "@/utils/api"
+import { useRouter } from 'next/navigation'
 
 interface IProps {
     totalRating: number,
@@ -126,6 +123,7 @@ const HoverRating = ({ value, setValue }: { value: number | null, setValue: Disp
 
 const icon = (idProduct: string, token: string) => {
     const [valueRating, setValueRating] = useState<number | null>(2)
+    const router = useRouter()
     return (
         <Paper sx={{ py: 2 }}>
             <Formik
@@ -144,6 +142,10 @@ const icon = (idProduct: string, token: string) => {
                             })
                             .json<IBackendResponse<IPagination<IProducts[]>>>()
                         console.log(response)
+                        if (response.data) {
+                            console.log('xin chào')
+                            router.refresh()
+                        }
                         setSubmitting(false);
                     }, 400);
                 }}
@@ -222,6 +224,7 @@ const RatingComponent = (props: IProps) => {
     const handleChange = () => {
 
     };
+    console.log(">>> check rating:", totalRating)
     return (
         <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
