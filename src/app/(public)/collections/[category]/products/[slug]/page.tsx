@@ -1,5 +1,5 @@
 import DetailProducts from "@/components/detail.products/detail.products";
-import { externalApi, sendRequest } from "@/utils/api";
+import { externalApi } from "@/utils/api";
 
 export default async function Page({ params }: { params: { slug: string, category: string } }) {
     const id = params.slug.split('_')[1].split('.')[0] || 'fake-id'
@@ -7,7 +7,7 @@ export default async function Page({ params }: { params: { slug: string, categor
 
     const [categories, products] = await Promise.all([
         externalApi.url(`/categories/slug/${params.category}`).get().json<IBackendResponse<ICategories>>(),
-        sendRequest({ next: { tags: ['product-by-id'] } }).url(`/products/${id}`).get().json<IBackendResponse<IProducts>>()
+        externalApi.options({ next: { tags: ['product-by-id'] } }).url(`/products/${id}`).get().json<IBackendResponse<IProducts>>()
     ])
 
     if (!products.data) {
