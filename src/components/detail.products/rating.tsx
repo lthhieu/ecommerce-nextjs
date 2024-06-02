@@ -19,6 +19,7 @@ import * as Yup from 'yup';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { externalApi } from "@/utils/api"
 import { useRouter } from 'next/navigation'
+import productAction from "@/app/actions"
 
 interface IProps {
     totalRating: number,
@@ -141,10 +142,8 @@ const icon = (idProduct: string, token: string) => {
                                 star: valueRating, comment: values.comment, postedAt: Date.now()
                             })
                             .json<IBackendResponse<IPagination<IProducts[]>>>()
-                        console.log(response)
                         if (response.data) {
-                            console.log('xin chào')
-                            router.refresh()
+                            productAction()
                         }
                         setSubmitting(false);
                     }, 400);

@@ -1,5 +1,5 @@
 import DetailProducts from "@/components/detail.products/detail.products";
-import { externalApi } from "@/utils/api";
+import { externalApi, sendRequest } from "@/utils/api";
 
 export default async function Page({ params }: { params: { slug: string, category: string } }) {
     const id = params.slug.split('_')[1].split('.')[0] || 'fake-id'
@@ -7,9 +7,8 @@ export default async function Page({ params }: { params: { slug: string, categor
 
     const [categories, products] = await Promise.all([
         externalApi.url(`/categories/slug/${params.category}`).get().json<IBackendResponse<ICategories>>(),
-        externalApi.url(`/products/${id}?_=${new Date().getTime()}`).get().json<IBackendResponse<IProducts>>()
+        sendRequest({ next: { tags: ['product-by-id'] } }).url(`/products/${id}`).get().json<IBackendResponse<IProducts>>()
     ])
-    // const test = await (await fetch("http://localhost:8000/api/v1/products/65b0b261437b815d977e3e1d", { cache: 'no-store' })).json()
 
     if (!products.data) {
         console.log('failed !')
