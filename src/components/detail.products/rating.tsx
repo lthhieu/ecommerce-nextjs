@@ -18,12 +18,13 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { externalApi } from "@/utils/api"
-import { useRouter } from 'next/navigation'
 import productAction from "@/app/actions"
+import { useToast } from "@/utils/toast.mui"
 
 interface IProps {
     totalRating: number,
-    idProduct: string
+    idProduct: string,
+    ratings: []
 }
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
@@ -38,13 +39,13 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     },
 }));
 
-const ProgressComponent = ({ idx, value, total }: { idx: number, value: number, total: number }) => {
+const ProgressComponent = ({ idx, totalRatings, total }: { idx: number, totalRatings: number, total: number }) => {
     return (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: .5 }}>
             <Typography >{idx}</Typography>
             <Rating size="small" max={1} value={1} />
             <Box sx={{ width: '100%' }}>
-                <BorderLinearProgress variant="determinate" value={value / 100 * value} />
+                <BorderLinearProgress variant="determinate" value={total / totalRatings * 100} />
             </Box>
             <Typography variant="body2" color="text.secondary">{total}</Typography>
         </Box>
@@ -92,7 +93,7 @@ const HoverRating = ({ value, setValue }: { value: number | null, setValue: Disp
         if (hover > 1 && hover < 4) {
             setColor('text.secondary')
         }
-    }, [hover])
+    }, [hover, value])
 
     return (
         <Box
@@ -124,7 +125,7 @@ const HoverRating = ({ value, setValue }: { value: number | null, setValue: Disp
 
 const icon = (idProduct: string, token: string) => {
     const [valueRating, setValueRating] = useState<number | null>(2)
-    const router = useRouter()
+    const toast = useToast()
     return (
         <Paper sx={{ py: 2 }}>
             <Formik
@@ -133,7 +134,7 @@ const icon = (idProduct: string, token: string) => {
                     // stars: Yup.number().required('Required'),
                     comment: Yup.string().required('Required').test('len', 'At least 10 characters', val => val.length >= 10),
                 })}
-                onSubmit={(values, { setSubmitting }) => {
+                onSubmit={(values, { setSubmitting, resetForm }) => {
                     setTimeout(async () => {
                         // console.log(values.comment, valueRating, idProduct)
                         const response = await externalApi
@@ -144,6 +145,14 @@ const icon = (idProduct: string, token: string) => {
                             .json<IBackendResponse<IPagination<IProducts[]>>>()
                         if (response.data) {
                             productAction()
+                            //clear data
+                            resetForm({
+                                values: {
+                                    comment: ''
+                                }
+                            });
+                            setValueRating(2)
+                            toast.success('Voted successfully!')
                         }
                         setSubmitting(false);
                     }, 400);
@@ -208,7 +217,7 @@ const icon = (idProduct: string, token: string) => {
 };
 
 const RatingComponent = (props: IProps) => {
-    const { totalRating, idProduct } = props
+    const { totalRating, idProduct, ratings } = props
     const { data: session } = useSession()
     const handleClick = () => {
         if (session?.user) {
@@ -228,7 +237,7 @@ const RatingComponent = (props: IProps) => {
         <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography sx={{ py: 1, fontWeight: 500, fontSize: '18px', letterSpacing: '.1rem', }}>Reviews and Comments</Typography>
-                <Typography sx={{ py: 1, fontWeight: 500, fontSize: '14px', letterSpacing: '.1rem', }}>99</Typography>
+                <Typography sx={{ py: 1, fontWeight: 500, fontSize: '14px', letterSpacing: '.1rem', }}>{ratings.length}</Typography>
             </Box>
             <Divider color="#7F00FF" sx={{ height: 2 }} />
             <Box sx={{ flexGrow: 1, mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -236,12 +245,13 @@ const RatingComponent = (props: IProps) => {
                     <Typography sx={{ fontSize: '22px' }}>Average rating</Typography>
                     <Typography sx={{ fontSize: '38px', color: '#7F00FF', fontWeight: 500 }}>{totalRating}/5</Typography>
                     <Rating value={totalRating} precision={0.5} readOnly />
-                    <Typography variant="body2" color="text.secondary">100 reviews</Typography>
+                    <Typography variant="body2" color="text.secondary">{ratings.length} reviews</Typography>
                 </Box>
                 <Box sx={{ textAlign: 'center', flexGrow: 1, px: '10%', display: "flex", flexDirection: 'column', gap: 2 }}>
                     {_.map(_.reverse(Array.from(Array(5).keys())), (item) => {
                         return (
-                            <ProgressComponent key={item} idx={item + 1} value={40} total={200} />
+                            <ProgressComponent key={item} idx={item + 1} totalRatings={ratings.length} total={ratings.length > 0 ?
+                                Object.values(ratings).filter((v: IRatings) => v.star === item + 1).length : 0} />
                         )
                     })}
                 </Box>

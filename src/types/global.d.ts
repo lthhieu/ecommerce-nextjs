@@ -73,5 +73,11 @@ declare global {
         label: string,
         variants: string[]
     }
+    interface IRatings {
+        postedBy: string,
+        star: number,
+        comment: string,
+        postedAt: string
+    }
 }
 export { };
