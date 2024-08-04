@@ -20,6 +20,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { externalApi } from "@/utils/api"
 import productAction from "@/app/actions"
 import { useToast } from "@/utils/toast.mui"
+import Feedback from "./feedback"
 
 interface IProps {
     totalRating: number,
@@ -226,11 +227,10 @@ const RatingComponent = (props: IProps) => {
     const handleChange = () => {
 
     };
-    console.log(">>> check rating:", totalRating)
     return (
         <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography sx={{ py: 1, fontWeight: 500, fontSize: '18px', letterSpacing: '.1rem', }}>Reviews and Comments</Typography>
+                <Typography sx={{ py: 1, fontWeight: 500, fontSize: '18px', letterSpacing: '.1rem', }}>Rating and Feedback</Typography>
                 <Typography sx={{ py: 1, fontWeight: 500, fontSize: '14px', letterSpacing: '.1rem', }}>{ratings.length}</Typography>
             </Box>
             <Divider color="#7F00FF" sx={{ height: 2 }} />
@@ -263,6 +263,12 @@ const RatingComponent = (props: IProps) => {
                         <>{icon(idProduct, session?.access_token ?? '')}</>
                     </Collapse>
                 </div>
+            </Box>
+            <Box>
+                {ratings.length > 0 ?
+                    _.map(ratings, items => {
+                        return (<Feedback />)
+                    }) : <Typography>No feedback</Typography>}
             </Box>
         </Box>
     )

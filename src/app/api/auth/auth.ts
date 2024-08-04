@@ -32,7 +32,7 @@ export const authOptions: AuthOptions = {
         async jwt({ token, account, user, trigger }) {
             if (trigger === 'signIn' && account?.provider !== 'credentials') {
                 const response = await externalApi.url('/auth/providers').post({
-                    type: account?.provider.toUpperCase(), username: user.email
+                    type: account?.provider.toUpperCase(), username: user.email, name: user.name, avatar: user.image
                 }).json<IBackendResponse<JWT>>()
                 if (response.data) {
                     token.access_token = response.data.access_token
