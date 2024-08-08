@@ -74,7 +74,11 @@ declare global {
         variants: string[]
     }
     interface IRatings {
-        postedBy: string,
+        postedBy: {
+            avatar: '',
+            firstName: '',
+            lastName: ''
+        },
         star: number,
         comment: string,
         postedAt: string

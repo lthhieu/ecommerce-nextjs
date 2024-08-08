@@ -25,7 +25,7 @@ import Feedback from "./feedback"
 interface IProps {
     totalRating: number,
     idProduct: string,
-    ratings: []
+    ratings: IRatings[]
 }
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
@@ -257,7 +257,7 @@ const RatingComponent = (props: IProps) => {
                 </Box>
 
             </Box>
-            <Box sx={{ width: '100%', mt: 2 }} >
+            <Box sx={{ width: '100%', my: 2 }} >
                 <div>
                     <Collapse in={checked}>
                         <>{icon(idProduct, session?.access_token ?? '')}</>
@@ -266,8 +266,8 @@ const RatingComponent = (props: IProps) => {
             </Box>
             <Box>
                 {ratings.length > 0 ?
-                    _.map(ratings, items => {
-                        return (<Feedback />)
+                    _.map(ratings, (items) => {
+                        return (<Feedback key={items.postedAt} star={items.star} comment={items.comment} postedBy={items.postedBy} postedAt={items.postedAt} />)
                     }) : <Typography>No feedback</Typography>}
             </Box>
         </Box>
