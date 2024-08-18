@@ -277,7 +277,6 @@ const icon = (idProduct: string, token: string, handleClose: any) => {
 const RatingComponent = (props: IProps) => {
     const { totalRating, idProduct, ratings } = props
     const [open, setOpen] = useState(false);
-
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -383,8 +382,12 @@ const RatingComponent = (props: IProps) => {
             </Box>
             <Box>
                 {ratings.length > 0 ?
-                    _.map(ratings, (items) => {
-                        return (<Feedback key={items.postedAt} star={items.star} comment={items.comment} postedBy={items.postedBy} postedAt={items.postedAt} />)
+                    _.map(ratings.sort((a: any, b: any) => {
+                        return new Date(b.postedAt).valueOf() - new Date(a.postedAt).valueOf()
+                    }), (items) => {
+                        return (<Feedback
+                            key={items.postedAt}
+                            star={items.star} comment={items.comment} postedBy={items.postedBy} postedAt={items.postedAt} />)
                     }) : <Typography>No feedback</Typography>}
             </Box>
         </Box>
